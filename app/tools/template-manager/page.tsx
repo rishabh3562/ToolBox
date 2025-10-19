@@ -18,6 +18,7 @@ export default function TemplateManagerPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [tags, setTags] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -58,13 +59,18 @@ export default function TemplateManagerPage() {
     loadData();
   }, [loadData]);
   const handleCreateTemplate = async () => {
-    const newTemplate = await TemplateService.createTemplate({
-      name: 'Untitled',
-      category: 'blog',
-      content: 'New content...',
-    });
-    setTemplates([newTemplate, ...templates]);
-    setSelectedTemplate(newTemplate);
+    try {
+      setError(null);
+      const newTemplate = await TemplateService.createTemplate({
+        name: 'Untitled',
+        category: 'blog',
+        content: 'New content...',
+      });
+      setTemplates([newTemplate, ...templates]);
+      setSelectedTemplate(newTemplate);
+    } catch (err) {
+      setError('Failed to create template.');
+    }
   };
 
   const handleVariableChange = async (key: string, value: string) => {
@@ -85,7 +91,9 @@ export default function TemplateManagerPage() {
   };
 
   const getHighlightedText = (text: string, highlight: string) => {
-    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    if (!highlight) return <span>{text}</span>;
+    const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
     return (
       <span>
         {parts.map((part, i) =>
@@ -148,6 +156,7 @@ export default function TemplateManagerPage() {
             + New Template
           </button>
         </div>
+        {error && <p className="text-red-500">{error}</p>}
 
         <div className="grid md:grid-cols-2 gap-8">
           <VariableForm
