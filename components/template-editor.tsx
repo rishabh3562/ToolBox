@@ -17,13 +17,22 @@ export function TemplateEditor({ template, variables }: TemplateEditorProps) {
   const [content, setContent] = useState(template.content);
   const [category, setCategory] = useState(template.category);
   const [tags, setTags] = useState(template.tags.join(', '));
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSave = async () => {
-    await TemplateService.updateTemplate(template.id, {
-      content,
-      category,
-      tags: tags.split(',').map(t => t.trim()),
-    });
+    try {
+      setError(null);
+      setSuccess(null);
+      await TemplateService.updateTemplate(template.id, {
+        content,
+        category,
+        tags: tags.split(',').map(t => t.trim()),
+      });
+      setSuccess('Template saved successfully!');
+    } catch (err) {
+      setError('Failed to save template.');
+    }
   };
 
   const generateContent = () => {
@@ -69,6 +78,8 @@ export function TemplateEditor({ template, variables }: TemplateEditorProps) {
             <Button onClick={handleSave}>Save</Button>
             <Button onClick={copyToClipboard}>Copy to Clipboard</Button>
           </div>
+          {error && <p className="text-red-500">{error}</p>}
+          {success && <p className="text-green-500">{success}</p>}
         </div>
       </div>
     </Card>
