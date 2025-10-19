@@ -1,8 +1,9 @@
 export interface Template {
   id: string;
   name: string;
-  category: 'email' | 'blog' | 'social';
+  category: string;
   content: string;
+  tags: string[];
 }
 
 export interface Variable {

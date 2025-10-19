@@ -5,6 +5,8 @@ import { Template, Variable } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { TemplateService } from '@/lib/db/services/templateService';
 
 interface TemplateEditorProps {
   template: Template;
@@ -13,6 +15,16 @@ interface TemplateEditorProps {
 
 export function TemplateEditor({ template, variables }: TemplateEditorProps) {
   const [content, setContent] = useState(template.content);
+  const [category, setCategory] = useState(template.category);
+  const [tags, setTags] = useState(template.tags.join(', '));
+
+  const handleSave = async () => {
+    await TemplateService.updateTemplate(template.id, {
+      content,
+      category,
+      tags: tags.split(',').map(t => t.trim()),
+    });
+  };
 
   const generateContent = () => {
     let result = content;
@@ -31,6 +43,18 @@ export function TemplateEditor({ template, variables }: TemplateEditorProps) {
     <Card className="p-6">
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">{template.name}</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            placeholder="Category"
+          />
+          <Input
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="Tags (comma-separated)"
+          />
+        </div>
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -41,7 +65,10 @@ export function TemplateEditor({ template, variables }: TemplateEditorProps) {
           <div className="p-4 rounded-md bg-muted whitespace-pre-wrap">
             {generateContent()}
           </div>
-          <Button onClick={copyToClipboard}>Copy to Clipboard</Button>
+          <div className="flex gap-4">
+            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={copyToClipboard}>Copy to Clipboard</Button>
+          </div>
         </div>
       </div>
     </Card>

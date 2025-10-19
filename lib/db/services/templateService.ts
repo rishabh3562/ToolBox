@@ -26,6 +26,32 @@ export class TemplateService {
     }));
   }
 
+  static async getFilteredTemplates(filters: {
+    searchQuery?: string;
+    categories?: string[];
+    tags?: string[];
+  }): Promise<ITemplate[]> {
+    await connectDB();
+    
+    const query: any = {};
+    if (filters.searchQuery) {
+      query.name = { $regex: filters.searchQuery, $options: 'i' };
+    }
+    if (filters.categories && filters.categories.length > 0) {
+      query.category = { $in: filters.categories };
+    }
+    if (filters.tags && filters.tags.length > 0) {
+      query.tags = { $all: filters.tags };
+    }
+    
+    const templates = await Template.find(query).sort({ createdAt: -1 });
+    
+    return templates.map(template => ({
+      id: template._id.toString(),
+      ...template.toObject()
+    }));
+  }
+
   static async getTemplateById(id: string): Promise<ITemplate | null> {
     await connectDB();
     
@@ -61,17 +87,6 @@ export class TemplateService {
     
     const result = await Template.findByIdAndDelete(id);
     return !!result;
-  }
-
-  static async getTemplatesByCategory(category: string): Promise<ITemplate[]> {
-    await connectDB();
-    
-    const templates = await Template.find({ category }).sort({ createdAt: -1 });
-    
-    return templates.map(template => ({
-      id: template._id.toString(),
-      ...template.toObject()
-    }));
   }
 
   static async initializeDefaultTemplates(): Promise<void> {
