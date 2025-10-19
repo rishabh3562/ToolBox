@@ -1,44 +1,22 @@
-import type {ReactNode} from 'react';
-import clsx from 'clsx';
 import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
-import Heading from '@theme/Heading';
 
-import styles from './index.module.css';
-
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
+export default function Home() {
   return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
-        </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
+    <main style={{padding: "4rem 0"}}>
+      <section style={{textAlign: "center"}}>
+        <h1 style={{marginBottom: "0.5rem"}}>ToolBox Documentation</h1>
+        <p style={{opacity: 0.8, marginBottom: "1.5rem"}}>
+          Start here to install, use, and extend ToolBox (plugins, API, guides).
+        </p>
+        <div style={{display: "flex", gap: "0.75rem", justifyContent: "center"}}>
+          <Link className="button button--primary button--lg" to="/docs/getting-started">
+            Get Started
+          </Link>
+          <Link className="button button--secondary button--lg" href="https://github.com/rishabh3562/ToolBox">
+            GitHub
           </Link>
         </div>
-      </div>
-    </header>
-  );
-}
-
-export default function Home(): ReactNode {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
-      <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
-    </Layout>
+      </section>
+    </main>
   );
 }
