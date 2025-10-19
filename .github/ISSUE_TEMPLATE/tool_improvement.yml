@@ -1,0 +1,78 @@
+name: Tool Improvement
+description: Suggest improvements to an existing tool entry
+title: "[Improvement]: "
+labels: ["tool improvement", "enhancement", "hacktoberfest"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our tool listings!
+
+        ⚠️ **Note:** Some existing issues may be AI-generated. Please verify the issue against the actual codebase before starting work.
+
+  - type: input
+    id: tool-name
+    attributes:
+      label: Tool Name
+      description: Which tool needs improvement?
+      placeholder: e.g., VS Code, Postman
+    validations:
+      required: true
+
+  - type: dropdown
+    id: improvement-type
+    attributes:
+      label: Type of Improvement
+      description: What kind of improvement is needed?
+      multiple: true
+      options:
+        - Update description
+        - Update website URL
+        - Add missing features
+        - Fix incorrect information
+        - Update pricing information
+        - Add platform support
+        - Update category
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-issue
+    attributes:
+      label: Current Issue
+      description: What's wrong with the current tool entry?
+      placeholder: The current description doesn't mention...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-changes
+    attributes:
+      label: Proposed Changes
+      description: What specific changes should be made?
+      placeholder: |
+        - Update description to include...
+        - Change URL from X to Y
+        - Add feature: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context or references here
+      placeholder: Links to documentation, screenshots, etc.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      options:
+        - label: I have verified the information I'm suggesting is accurate
+          required: true
+        - label: I am willing to help implement this improvement
+          required: false

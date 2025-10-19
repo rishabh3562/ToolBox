@@ -1,0 +1,59 @@
+import { Variable } from "@/types";
+
+export const defaultVariables: Variable[] = [
+  {
+    key: "client_name",
+    value: "",
+    label: "Client Name",
+    description: "Client full name as you want it to appear",
+  },
+
+  {
+    key: "your_name",
+    value: "Rishabh Dubey",
+    label: "Your Name",
+    description: "Your full name as you want it to appear",
+  },
+  {
+    key: "role",
+    value: "Web Dev & AWS Certified Cloud practioner",
+    label: "Professional Role",
+    description: "Your current professional title",
+  },
+  {
+    key: "portfolio_url",
+    value: "https://dubeyrishabh108.vercel.app/home",
+    label: "Portfolio URL",
+    description: "Link to your portfolio website",
+  },
+  {
+    key: "linkedin_url",
+    value: "https://www.linkedin.com/in/rishabh108/",
+    label: "LinkedIn URL",
+    description: "Your LinkedIn profile URL",
+  },
+  {
+    key: "topmate_url",
+    value: "https://topmate.io/rishabh108",
+    label: "Tompate URL",
+    description: "Your Tompate profile URL",
+  },
+  {
+    key: "github_url",
+    value: "https://github.com/rishabh3562",
+    label: "Github URL",
+    description: "Your Github profile URL",
+  },
+  {
+    key: "cal_url",
+    value: "https://cal.com/dubeyrishabh108",
+    label: "Cal.com URL",
+    description: "Your Tompate profile URL",
+  },
+  {
+    key: "expertise",
+    value: "Web Development",
+    label: "Areas of Expertise",
+    description: "Your main professional skills and expertise",
+  },
+];

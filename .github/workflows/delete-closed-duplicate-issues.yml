@@ -1,0 +1,122 @@
+name: Delete Closed Duplicate Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "DELETE-PERMANENTLY" to confirm permanent deletion of CLOSED duplicate issues'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (preview only, no deletion)'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  delete-closed-duplicates:
+    name: Permanently delete CLOSED duplicate issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Validate confirmation
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "DELETE-PERMANENTLY" ]; then
+            echo "❌ Confirmation failed. You must type 'DELETE-PERMANENTLY' to proceed."
+            exit 1
+          fi
+          echo "✓ Confirmation validated - proceeding with permanent deletion"
+
+      - name: Find and delete CLOSED duplicate issues
+        env:
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set -e
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "🔍 DRY RUN MODE - No issues will be deleted"
+          else
+            echo "⚠️  WARNING: This will PERMANENTLY DELETE CLOSED duplicate issues"
+          fi
+
+          echo "Fetching all CLOSED issues with 'hacktoberfest' label..."
+
+          # Fetch all CLOSED issues with hacktoberfest label
+          issues=$(curl -sS -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/issues?state=closed&labels=hacktoberfest&per_page=100")
+
+          # Create a temporary file to track titles and their issue numbers
+          temp_file=$(mktemp)
+
+          echo "$issues" | jq -r '.[] | "\(.title)|\(.number)|\(.created_at)"' | sort > "$temp_file"
+
+          # Find duplicates (same title) and keep the oldest one
+          duplicates_found=false
+          current_title=""
+          oldest_issue=""
+          oldest_date=""
+
+          while IFS='|' read -r title issue_num created_at; do
+            if [ "$title" = "$current_title" ]; then
+              # This is a duplicate
+              duplicates_found=true
+
+              # Compare dates to keep the oldest
+              if [ -z "$oldest_date" ] || [ "$created_at" \< "$oldest_date" ]; then
+                # Current issue is older, delete the previous one
+                if [ -n "$oldest_issue" ]; then
+                  echo "🗑️  Found CLOSED duplicate: #$oldest_issue - '$title' (newer, will delete)"
+
+                  if [ "$DRY_RUN" = "false" ]; then
+                    gh issue delete "$oldest_issue" --repo "$REPO" --yes
+                    if [ $? -eq 0 ]; then
+                      echo "✓ Deleted CLOSED duplicate issue #$oldest_issue"
+                    else
+                      echo "✗ Failed to delete issue #$oldest_issue"
+                    fi
+                  else
+                    echo "  [DRY RUN] Would delete CLOSED issue #$oldest_issue"
+                  fi
+                fi
+                oldest_issue="$issue_num"
+                oldest_date="$created_at"
+              else
+                # Previous issue is older, delete this one
+                echo "🗑️  Found CLOSED duplicate: #$issue_num - '$title' (newer, will delete)"
+
+                if [ "$DRY_RUN" = "false" ]; then
+                  gh issue delete "$issue_num" --repo "$REPO" --yes
+                  if [ $? -eq 0 ]; then
+                    echo "✓ Deleted CLOSED duplicate issue #$issue_num"
+                  else
+                    echo "✗ Failed to delete issue #$issue_num"
+                  fi
+                else
+                  echo "  [DRY RUN] Would delete CLOSED issue #$issue_num"
+                fi
+              fi
+            else
+              # New title, reset tracking
+              current_title="$title"
+              oldest_issue="$issue_num"
+              oldest_date="$created_at"
+            fi
+          done < "$temp_file"
+
+          rm "$temp_file"
+
+          if [ "$duplicates_found" = "false" ]; then
+            echo "✓ No CLOSED duplicate issues found."
+          elif [ "$DRY_RUN" = "true" ]; then
+            echo ""
+            echo "🔍 Dry run complete. Re-run with 'Dry run: false' and type 'DELETE-PERMANENTLY' to actually delete CLOSED duplicates."
+          else
+            echo "✓ CLOSED duplicate deletion complete."
+            echo "⚠️  Note: Deleted issues cannot be recovered!"
+          fi

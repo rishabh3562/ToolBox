@@ -1,0 +1,116 @@
+# Repository labels configuration for label-sync action
+# Run via .github/workflows/hacktoberfest.yml
+
+# Hacktoberfest labels
+- name: hacktoberfest
+  color: "9c27b0"
+  description: Good issues for Hacktoberfest participants
+
+- name: hacktoberfest-accepted
+  color: "0e8a16"
+  description: Label to mark PRs accepted for Hacktoberfest
+
+# Difficulty levels
+- name: good first issue
+  color: "7057ff"
+  description: Beginner-friendly issues
+
+- name: intermediate
+  color: "ededed"
+  description: Requires moderate experience
+
+- name: advanced
+  color: "5319e7"
+  description: Complex issue requiring deep knowledge
+
+# Contribution types
+- name: help wanted
+  color: "008672"
+  description: Help from the community is appreciated
+
+- name: documentation
+  color: "1d76db"
+  description: Docs-only changes
+
+- name: bug
+  color: "d73a4a"
+  description: Something isn't working
+
+- name: enhancement
+  color: "a2eeef"
+  description: New feature or request
+
+- name: refactor
+  color: "fbca04"
+  description: Refactoring or cleanup
+
+- name: test
+  color: "bfe5bf"
+  description: Testing improvements or additions
+
+# Quality & Standards
+- name: accessibility
+  color: "bfdadc"
+  description: A11y improvements
+
+- name: performance
+  color: "fef2c0"
+  description: Performance related improvements
+
+- name: security
+  color: "ee0701"
+  description: Security related improvements
+
+- name: ui/ux
+  color: "c5def5"
+  description: User interface and experience improvements
+
+# Tool-specific categories
+- name: new tool
+  color: "0075ca"
+  description: Adding a new tool to the toolbox
+
+- name: tool improvement
+  color: "84b6eb"
+  description: Improving an existing tool
+
+- name: tool removal
+  color: "b60205"
+  description: Removing or deprecating a tool
+
+- name: category organization
+  color: "d4c5f9"
+  description: Organizing tools into categories
+
+# Workflow & Process
+- name: dependencies
+  color: "0366d6"
+  description: Dependency updates
+
+- name: breaking change
+  color: "d93f0b"
+  description: Changes that break backward compatibility
+
+- name: needs discussion
+  color: "d876e3"
+  description: Needs community discussion before implementation
+
+- name: duplicate
+  color: "cfd3d7"
+  description: This issue or pull request already exists
+
+- name: wontfix
+  color: "ffffff"
+  description: This will not be worked on
+
+- name: invalid
+  color: "e4e669"
+  description: This doesn't seem right
+
+- name: question
+  color: "d876e3"
+  description: Further information is requested
+
+- name: cla-required
+  color: "f9d0c4"
+  description: CLA acceptance required for this contribution

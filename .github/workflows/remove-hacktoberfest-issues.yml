@@ -1,0 +1,64 @@
+name: Remove Hacktoberfest Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "DELETE" to confirm removal of all Hacktoberfest issues'
+        required: true
+        type: string
+
+jobs:
+  remove-issues:
+    name: Remove all Hacktoberfest issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Validate confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "DELETE" ]; then
+            echo "❌ Confirmation failed. You must type 'DELETE' to proceed."
+            exit 1
+          fi
+          echo "✓ Confirmation validated"
+
+      - name: Remove Hacktoberfest issues
+        env:
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          echo "Fetching all open issues with 'hacktoberfest' label..."
+
+          # Fetch all open issues with hacktoberfest label
+          issues=$(curl -sS -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/issues?state=open&labels=hacktoberfest&per_page=100")
+
+          issue_count=$(echo "$issues" | jq '. | length')
+
+          if [ "$issue_count" -eq 0 ]; then
+            echo "No Hacktoberfest issues found to remove."
+            exit 0
+          fi
+
+          echo "Found $issue_count Hacktoberfest issues to close."
+
+          # Close each issue
+          echo "$issues" | jq -r '.[].number' | while read -r issue_num; do
+            issue_title=$(echo "$issues" | jq -r ".[] | select(.number == $issue_num) | .title")
+            echo "Closing issue #$issue_num: $issue_title"
+
+            curl -sS -X PATCH \
+              -H "Authorization: token $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPO/issues/$issue_num" \
+              -d '{"state":"closed","state_reason":"not_planned"}' > /dev/null
+
+            echo "✓ Closed issue #$issue_num"
+          done
+
+          echo "Successfully closed $issue_count Hacktoberfest issues."

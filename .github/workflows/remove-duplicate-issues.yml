@@ -1,0 +1,119 @@
+name: Remove Duplicate Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "DELETE" to confirm removal of duplicate issues'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (preview only, no deletion)'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  remove-duplicates:
+    name: Remove duplicate issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Validate confirmation
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "DELETE" ]; then
+            echo "❌ Confirmation failed. You must type 'DELETE' to proceed."
+            exit 1
+          fi
+          echo "✓ Confirmation validated"
+
+      - name: Find and remove duplicate issues
+        env:
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set -e
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "🔍 DRY RUN MODE - No issues will be closed"
+          fi
+
+          echo "Fetching all open issues with 'hacktoberfest' label..."
+
+          # Fetch all open issues with hacktoberfest label
+          issues=$(curl -sS -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/issues?state=open&labels=hacktoberfest&per_page=100")
+
+          # Create a temporary file to track titles and their issue numbers
+          temp_file=$(mktemp)
+
+          echo "$issues" | jq -r '.[] | "\(.title)|\(.number)|\(.created_at)"' | sort > "$temp_file"
+
+          # Find duplicates (same title) and keep the oldest one
+          duplicates_found=false
+          current_title=""
+          oldest_issue=""
+          oldest_date=""
+
+          while IFS='|' read -r title issue_num created_at; do
+            if [ "$title" = "$current_title" ]; then
+              # This is a duplicate
+              duplicates_found=true
+
+              # Compare dates to keep the oldest
+              if [ -z "$oldest_date" ] || [ "$created_at" \< "$oldest_date" ]; then
+                # Current issue is older, close the previous one
+                if [ -n "$oldest_issue" ]; then
+                  echo "Found duplicate: #$oldest_issue - '$title' (newer, will close)"
+
+                  if [ "$DRY_RUN" = "false" ]; then
+                    curl -sS -X PATCH \
+                      -H "Authorization: token $GH_TOKEN" \
+                      -H "Accept: application/vnd.github+json" \
+                      "https://api.github.com/repos/$REPO/issues/$oldest_issue" \
+                      -d '{"state":"closed","state_reason":"not_planned"}' > /dev/null
+                    echo "✓ Closed duplicate issue #$oldest_issue"
+                  else
+                    echo "  [DRY RUN] Would close issue #$oldest_issue"
+                  fi
+                fi
+                oldest_issue="$issue_num"
+                oldest_date="$created_at"
+              else
+                # Previous issue is older, close this one
+                echo "Found duplicate: #$issue_num - '$title' (newer, will close)"
+
+                if [ "$DRY_RUN" = "false" ]; then
+                  curl -sS -X PATCH \
+                    -H "Authorization: token $GH_TOKEN" \
+                    -H "Accept: application/vnd.github+json" \
+                    "https://api.github.com/repos/$REPO/issues/$issue_num" \
+                    -d '{"state":"closed","state_reason":"not_planned"}' > /dev/null
+                  echo "✓ Closed duplicate issue #$issue_num"
+                else
+                  echo "  [DRY RUN] Would close issue #$issue_num"
+                fi
+              fi
+            else
+              # New title, reset tracking
+              current_title="$title"
+              oldest_issue="$issue_num"
+              oldest_date="$created_at"
+            fi
+          done < "$temp_file"
+
+          rm "$temp_file"
+
+          if [ "$duplicates_found" = "false" ]; then
+            echo "✓ No duplicate issues found."
+          elif [ "$DRY_RUN" = "true" ]; then
+            echo ""
+            echo "🔍 Dry run complete. Re-run with 'Dry run: false' and type 'DELETE' to actually close duplicates."
+          else
+            echo "✓ Duplicate removal complete."
+          fi

@@ -1,0 +1,168 @@
+ToolBox Proprietary License
+
+Copyright (c) 2025 Rishabh Dubey. All rights reserved.
+
+==============================================================================
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND CONTRIBUTION
+
+1. DEFINITIONS
+
+   "Software" refers to the ToolBox project and all associated source code,
+   documentation, and materials contained in this repository.
+
+   "Owner" refers to Rishabh Dubey (GitHub: @rishabh3562).
+
+   "Contributor" refers to any individual or entity that submits code,
+   documentation, or other materials to the Software.
+
+   "Contribution" refers to any work of authorship submitted to the Software.
+
+2. GRANT OF RIGHTS
+
+   Subject to the terms and conditions of this License, the Owner grants you
+   a limited, non-exclusive, non-transferable, revocable license to:
+
+   a) View and study the source code for personal educational purposes
+   b) Fork the repository for the sole purpose of contributing improvements
+      back to the original project
+   c) Submit Contributions via pull requests to the original repository
+
+   This license does NOT grant you the right to:
+
+   a) Use the Software for any commercial purposes
+   b) Distribute the Software or any derivatives thereof
+   c) Sublicense, sell, or transfer the Software or derivatives
+   d) Create competing products or services based on the Software
+   e) Use the Software in production environments without permission
+   f) Remove or modify this license or copyright notices
+   g) Create public forks that do not contribute back to the original project
+
+3. OWNERSHIP AND INTELLECTUAL PROPERTY
+
+   The Owner retains all right, title, and interest in and to the Software,
+   including all intellectual property rights, patents, trademarks, copyrights,
+   and trade secrets. The Software is licensed, not sold.
+
+   ALL COMMERCIAL RIGHTS ARE EXCLUSIVELY RESERVED TO THE OWNER.
+
+   By submitting a Contribution, you grant the Owner perpetual, irrevocable,
+   worldwide, royalty-free rights to your Contribution as specified in the
+   Contributor License Agreement (CLA.md). Contributors retain copyright to
+   their contributions but grant the Owner exclusive commercial rights.
+
+4. CONTRIBUTIONS
+
+   By submitting a Contribution, you automatically agree to the Contributor
+   License Agreement (CLA.md). This means you:
+
+   a) Certify that your Contribution is your original work
+   b) Grant the Owner exclusive commercial rights to your Contribution
+   c) Confirm your Contribution does not violate any third-party rights
+   d) Understand that ONLY the Owner can monetize or commercialize the Software
+   e) Waive all claims to compensation, royalties, or revenue sharing
+
+   The Owner reserves the right to accept or reject any Contribution at their
+   sole discretion without explanation.
+
+5. COMMERCIAL USE AND MONETIZATION
+
+   ONLY THE OWNER (Rishabh Dubey) HAS THE RIGHT TO:
+
+   a) Use the Software for commercial purposes
+   b) Monetize the Software in any form
+   c) Offer the Software as a service (SaaS)
+   d) Sell, license, or sublicense the Software or derivatives
+   e) Use the Software in commercial products or services
+   f) Generate revenue from the Software in any manner
+
+   Any commercial use by others requires explicit written permission from
+   the Owner and may be subject to commercial licensing fees.
+
+   Contact: GitHub @rishabh3562 for commercial licensing inquiries.
+
+6. PROHIBITION ON REDISTRIBUTION
+
+   You may NOT:
+
+   a) Redistribute the Software in source or binary form
+   b) Publish the Software on other platforms or repositories
+   c) Create derivative works for distribution
+   d) Share the Software with third parties
+   e) Mirror or clone the repository for purposes other than contributing
+
+   The ONLY exception is forking for the purpose of submitting contributions
+   back to the original repository via pull requests.
+
+7. TERMINATION
+
+   This license is effective until terminated. Your rights under this license
+   will terminate automatically without notice if you fail to comply with any
+   of its terms.
+
+   Upon termination, you must:
+   a) Cease all use of the Software
+   b) Delete all copies in your possession
+   c) Delete any public forks of the repository
+
+8. NO WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+   THE OWNER ASSUMES NO LIABILITY FOR:
+   a) Damages resulting from the use of the Software
+   b) Data loss or corruption
+   c) Business interruption
+   d) Any other direct or indirect damages
+
+9. LIMITATION OF LIABILITY
+
+   IN NO EVENT SHALL THE OWNER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
+   FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+   THIS LIMITATION APPLIES EVEN IF THE OWNER HAS BEEN ADVISED OF THE
+   POSSIBILITY OF SUCH DAMAGES.
+
+10. INTELLECTUAL PROPERTY PROTECTION
+
+    You acknowledge that:
+
+    a) The Software contains proprietary information and trade secrets
+    b) Unauthorized use may cause irreparable harm to the Owner
+    c) The Owner may seek injunctive relief for violations
+    d) Violations may result in legal action
+
+11. IDEA PROTECTION
+
+    The concepts, ideas, methodologies, and business models embodied in the
+    Software are proprietary to the Owner. You may not:
+
+    a) Use these ideas to create competing products
+    b) Share the underlying concepts with competitors
+    c) Reverse engineer the business model
+    d) Implement similar ideas without attribution
+
+12. ENTIRE AGREEMENT
+
+    This License represents the complete agreement between you and the Owner
+    concerning the Software. This License may only be modified by written
+    agreement signed by the Owner.
+
+13. SEVERABILITY
+
+    If any provision of this License is found to be unenforceable or invalid,
+    that provision shall be limited or eliminated to the minimum extent
+    necessary so that this License shall otherwise remain in full force and
+    effect.
+
+==============================================================================
+
+For questions regarding this license or commercial licensing inquiries:
+- GitHub: @rishabh3562
+- Repository: https://github.com/rishabh3562/ToolBox
+
+Last Updated: January 2025

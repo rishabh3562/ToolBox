@@ -1,0 +1,67 @@
+name: Delete Hacktoberfest Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "DELETE-PERMANENTLY" to confirm permanent deletion of all Hacktoberfest issues'
+        required: true
+        type: string
+
+jobs:
+  delete-issues:
+    name: Permanently delete all Hacktoberfest issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Validate confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "DELETE-PERMANENTLY" ]; then
+            echo "❌ Confirmation failed. You must type 'DELETE-PERMANENTLY' to proceed."
+            exit 1
+          fi
+          echo "✓ Confirmation validated - proceeding with permanent deletion"
+
+      - name: Delete Hacktoberfest issues
+        env:
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          echo "⚠️  WARNING: This will PERMANENTLY DELETE all Hacktoberfest issues"
+          echo "Fetching all open issues with 'hacktoberfest' label..."
+
+          # Fetch all open issues with hacktoberfest label
+          issues=$(curl -sS -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/issues?state=open&labels=hacktoberfest&per_page=100")
+
+          issue_count=$(echo "$issues" | jq '. | length')
+
+          if [ "$issue_count" -eq 0 ]; then
+            echo "No Hacktoberfest issues found to delete."
+            exit 0
+          fi
+
+          echo "Found $issue_count Hacktoberfest issues to DELETE."
+
+          # Delete each issue using GitHub CLI (gh issue delete)
+          echo "$issues" | jq -r '.[].number' | while read -r issue_num; do
+            issue_title=$(echo "$issues" | jq -r ".[] | select(.number == $issue_num) | .title")
+            echo "🗑️  Deleting issue #$issue_num: $issue_title"
+
+            # Use gh CLI to delete the issue
+            gh issue delete "$issue_num" --repo "$REPO" --yes
+
+            if [ $? -eq 0 ]; then
+              echo "✓ Deleted issue #$issue_num"
+            else
+              echo "✗ Failed to delete issue #$issue_num"
+            fi
+          done
+
+          echo "✓ Successfully deleted $issue_count Hacktoberfest issues."
+          echo "⚠️  Note: Deleted issues cannot be recovered!"

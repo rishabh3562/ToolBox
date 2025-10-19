@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question or Discussion
+    url: https://github.com/rishabh3562/ToolBox/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: ⚠️ AI-Generated Issues Notice
+    url: https://github.com/rishabh3562/ToolBox/blob/main/CONTRIBUTING.md#ai-generated-content-warning
+    about: Read this before working on issues - some may be AI-generated

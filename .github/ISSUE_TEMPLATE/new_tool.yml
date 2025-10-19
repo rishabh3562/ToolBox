@@ -1,0 +1,110 @@
+name: Add New Tool
+description: Submit a new tool to be added to the ToolBox
+title: "[Tool]: "
+labels: ["new tool", "enhancement", "hacktoberfest"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to ToolBox! Please fill out the information below to add a new tool.
+
+        ⚠️ **Note:** By submitting this, you agree to our [CLA](https://github.com/rishabh3562/ToolBox/blob/main/CLA.md) - you retain copyright but grant exclusive commercial rights to the owner.
+
+  - type: input
+    id: tool-name
+    attributes:
+      label: Tool Name
+      description: What is the name of the tool?
+      placeholder: e.g., VS Code, Postman, Docker
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which category does this tool belong to?
+      options:
+        - Development Tools
+        - Design Tools
+        - Productivity Tools
+        - DevOps & Infrastructure
+        - Testing & QA
+        - Communication
+        - Documentation
+        - Utilities
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a brief description of the tool and its purpose
+      placeholder: What does this tool do? Why is it useful?
+    validations:
+      required: true
+
+  - type: input
+    id: website
+    attributes:
+      label: Website URL
+      description: Official website or download link
+      placeholder: https://example.com
+    validations:
+      required: true
+
+  - type: dropdown
+    id: pricing
+    attributes:
+      label: Pricing
+      description: Is this tool free or paid?
+      options:
+        - Free
+        - Freemium
+        - Paid
+        - Open Source
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platforms does this tool support?
+      multiple: true
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Web-based
+        - iOS
+        - Android
+    validations:
+      required: true
+
+  - type: textarea
+    id: key-features
+    attributes:
+      label: Key Features
+      description: List the main features of this tool
+      placeholder: |
+        - Feature 1
+        - Feature 2
+        - Feature 3
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this tool hasn't been suggested already
+          required: true
+        - label: This tool is actively maintained and useful for daily workflows
+          required: true
+        - label: I am willing to help add this tool to the project
+          required: false

@@ -1,0 +1,142 @@
+name: Hacktoberfest Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync-labels:
+    name: Sync repository labels
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Sync labels
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: .github/labels.yml
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  create-issues:
+    name: Create Hacktoberfest issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq
+
+      - name: Create issues from combined file
+        env:
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          FILE_PATH=".github/hacktoberfest-issues/ALL.md"
+          if [ ! -f "$FILE_PATH" ]; then
+            echo "No Hacktoberfest issues file found. Skipping."
+            exit 0
+          fi
+
+          # Split the ALL.md file into multiple temporary files using a flexible delimiter
+          i=1
+          f=$(printf "issue_%03d.md" "$i")
+          while IFS= read -r line; do
+            if [[ "$line" == "---" ]]; then
+              i=$((i+1))
+              f=$(printf "issue_%03d.md" "$i")
+              continue
+            fi
+            echo "$line" >> "$f"
+          done < "$FILE_PATH"
+
+          # Iterate over split files and create issues
+          for f in issue_*.md; do
+            if [ ! -s "$f" ]; then
+              echo "Skipping empty file $f"
+              continue
+            fi
+
+            # Skip leading blank lines and extract title from first non-empty line starting with #
+            title=$(grep -m 1 '^#' "$f" | sed 's/^# \{0,1\}//')
+            # Get body after the title line, including tasks section for PR description
+            body=$(sed -n '/^#/,$ p' "$f" | tail -n +2)
+
+            # Extract category/type from body or title
+            category=""
+            if grep -q "## Description" "$f"; then
+              category="bug"
+            elif grep -q "## Feature Request" "$f"; then
+              category="enhancement"
+            elif grep -q "## Problem" "$f" && grep -q "refactor" "$f"; then
+              category="refactor"
+            elif grep -q "## Problem" "$f" && grep -q "test" "$f"; then
+              category="test"
+            elif grep -q "## Problem" "$f" && grep -q "docs" "$f"; then
+              category="documentation"
+            elif grep -q "## Problem" "$f" && grep -q "a11y\|accessibility" "$f"; then
+              category="accessibility"
+            elif grep -q "## Problem" "$f" && grep -q "perf\|performance" "$f"; then
+              category="performance"
+            elif grep -q "security\|credentials\|API key" "$f"; then
+              category="security"
+            fi
+
+            # Determine labels based on content
+            labels='["hacktoberfest"]'
+            if grep -q "good first issue" "$f"; then
+              labels=$(echo "$labels" | jq '. + ["good first issue"]')
+            fi
+            if grep -q "help wanted" "$f"; then
+              labels=$(echo "$labels" | jq '. + ["help wanted"]')
+            fi
+            if [ -n "$category" ]; then
+              labels=$(echo "$labels" | jq --arg cat "$category" '. + [$cat]')
+            fi
+
+            if [ -z "$title" ]; then
+              echo "File $f missing title. Skipping."
+              continue
+            fi
+
+            # Check if an issue with this title already exists (open or closed)
+            echo "Checking for existing issue: $title"
+            existing_issue=$(curl -sS -H "Authorization: token $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPO/issues?state=all&per_page=100" | \
+              jq --arg title "$title" '.[] | select(.title == $title) | .number' | head -n 1)
+
+            if [ -n "$existing_issue" ]; then
+              echo "⊘ Issue already exists: #$existing_issue - $title (skipping)"
+              continue
+            fi
+
+            payload=$(jq -n --arg title "$title" --arg body "$body" \
+              --argjson labels "$labels" \
+              '{title: $title, body: $body, labels: $labels}')
+
+            echo "Creating issue: $title"
+            response=$(curl -sS -X POST \
+              -H "Authorization: token $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/$REPO/issues \
+              -d "$payload")
+
+            if echo "$response" | jq -e '.number' > /dev/null 2>&1; then
+              issue_num=$(echo "$response" | jq -r '.number')
+              echo "✓ Created issue #$issue_num: $title"
+            else
+              echo "✗ Failed to create issue: $title"
+              echo "Response: $response"
+            fi
+          done
+
+          echo "Issue creation step completed."

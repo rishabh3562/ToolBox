@@ -1,0 +1,75 @@
+name: CLA Check
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  cla-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CLA Notice
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## 📋 Contributor License Agreement (CLA)
+
+            Thank you for your contribution to ToolBox!
+
+            **By submitting this pull request, you automatically agree to our [Contributor License Agreement (CLA)](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CLA.md).**
+
+            ### ⚠️ Important Points:
+
+            - ✅ You grant the project owner exclusive commercial rights to this project
+            - ✅ You waive any claims to commercialization or royalties
+            - ✅ You retain rights to use your contributions for non-commercial purposes
+            - ✅ You confirm your contributions are your original work
+            - ✅ This agreement is automatic upon submission
+
+            ### 📖 Full Agreement
+
+            Please read the complete [CLA](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CLA.md) for all terms and conditions.
+
+            ### ❓ Questions?
+
+            If you have questions about the CLA, please comment on this PR or open a discussion.
+
+            ---
+
+            **By keeping this PR open or updating it, you confirm your acceptance of the CLA.**`;
+
+            // Check if we've already commented
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.data.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Contributor License Agreement')
+            );
+
+            if (!botComment) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+      - name: Add CLA Label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['cla-required']
+            });
