@@ -1,0 +1,31 @@
+name: Update Issue Labels
+
+on:
+  workflow_dispatch:  # Manual trigger only - run when you want to update labels
+
+jobs:
+  update-labels:
+    name: Update labels on existing issues
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Update issue labels
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/scripts/update-issue-labels.sh
+
+      - name: Summary
+        run: |
+          echo "✅ Issue labels have been updated!"
+          echo ""
+          echo "Check your issues to see the new labels:"
+          echo "https://github.com/${{ github.repository }}/issues"

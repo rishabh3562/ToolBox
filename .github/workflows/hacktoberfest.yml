@@ -70,24 +70,50 @@ jobs:
             # Get body after the title line, including tasks section for PR description
             body=$(sed -n '/^#/,$ p' "$f" | tail -n +2)
 
-            # Extract category/type from body or title
+            # Extract category/type from body or title - priority order matters!
             category=""
-            if grep -q "## Description" "$f"; then
-              category="bug"
-            elif grep -q "## Feature Request" "$f"; then
-              category="enhancement"
-            elif grep -q "## Problem" "$f" && grep -q "refactor" "$f"; then
-              category="refactor"
-            elif grep -q "## Problem" "$f" && grep -q "test" "$f"; then
-              category="test"
-            elif grep -q "## Problem" "$f" && grep -q "docs" "$f"; then
-              category="documentation"
-            elif grep -q "## Problem" "$f" && grep -q "a11y\|accessibility" "$f"; then
-              category="accessibility"
-            elif grep -q "## Problem" "$f" && grep -q "perf\|performance" "$f"; then
+            # Check for specific keywords in title and body to determine category
+            if grep -qi "test\|testing" "$f"; then
+              category="testing"
+            elif grep -qi "performance\|optimization\|optimize" "$f"; then
               category="performance"
-            elif grep -q "security\|credentials\|API key" "$f"; then
+            elif grep -qi "accessibility\|a11y" "$f"; then
+              category="accessibility"
+            elif grep -qi "security\|auth" "$f"; then
               category="security"
+            elif grep -qi "documentation\|docs\|tutorial\|guide" "$f"; then
+              category="documentation"
+            elif grep -qi "api\|sdk" "$f"; then
+              category="api"
+            elif grep -qi "mobile\|ios\|android" "$f"; then
+              category="mobile"
+            elif grep -qi "database\|storage\|migration" "$f"; then
+              category="database"
+            elif grep -qi "plugin\|marketplace" "$f"; then
+              category="enhancement"
+            elif grep -qi "collaboration\|real-time" "$f"; then
+              category="enhancement"
+            elif grep -qi "analytics\|dashboard" "$f"; then
+              category="enhancement"
+            elif grep -qi "pwa\|offline" "$f"; then
+              category="enhancement"
+            elif grep -qi "import\|export\|backup" "$f"; then
+              category="enhancement"
+            elif grep -qi "notification" "$f"; then
+              category="enhancement"
+            elif grep -qi "social\|community" "$f"; then
+              category="enhancement"
+            elif grep -qi "ci/cd\|devops\|deployment" "$f"; then
+              category="devops"
+            elif grep -qi "ai\|machine learning" "$f"; then
+              category="ai"
+            elif grep -qi "admin\|moderation" "$f"; then
+              category="enhancement"
+            elif grep -q "## Bug" "$f"; then
+              category="bug"
+            else
+              # Default to enhancement for feature requests
+              category="enhancement"
             fi
 
             # Determine labels based on content
