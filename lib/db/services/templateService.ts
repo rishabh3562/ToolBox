@@ -30,6 +30,47 @@ export class TemplateService {
     });
   }
 
+  static async getFilteredTemplates(filters: {
+    searchQuery?: string;
+    categories?: string[];
+    tags?: string[];
+  }): Promise<ITemplate[]> {
+    await connectDB();
+
+    // Build MongoDB query with proper typing
+    const query: Record<string, unknown> = {};
+
+    // Fuzzy search: search in name, category, and content fields
+    if (filters.searchQuery) {
+      const searchRegex = { $regex: filters.searchQuery, $options: 'i' };
+      query.$or = [
+        { name: searchRegex },
+        { content: searchRegex },
+        { category: searchRegex }
+      ];
+    }
+
+    // Category filtering
+    if (filters.categories && filters.categories.length > 0) {
+      query.category = { $in: filters.categories };
+    }
+
+    // Tag filtering - match any of the provided tags for better UX
+    if (filters.tags && filters.tags.length > 0) {
+      query.tags = { $in: filters.tags };
+    }
+
+    const templates = await Template.find(query).sort({ createdAt: -1 });
+
+    return templates.map(template => {
+      const { _id, ...rest } = template.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
+  }
+
   static async getTemplateById(id: string): Promise<ITemplate | null> {
     await connectDB();
     
@@ -64,23 +105,9 @@ export class TemplateService {
 
   static async deleteTemplate(id: string): Promise<boolean> {
     await connectDB();
-    
+
     const result = await Template.findByIdAndDelete(id);
     return !!result;
-  }
-
-  static async getTemplatesByCategory(category: string): Promise<ITemplate[]> {
-    await connectDB();
-    
-    const templates = await Template.find({ category }).sort({ createdAt: -1 });
-    
-    return templates.map(template => {
-      const { _id, ...rest } = template.toObject();
-      return {
-        ...rest,
-        id: _id.toString()
-      };
-    });
   }
 
   static async initializeDefaultTemplates(): Promise<void> {
@@ -110,7 +137,7 @@ Best regards,
 {{your_name}}`,
       },
       {
-        name: "Tompate Reply",
+        name: "Topmate Reply",
         category: "email" as const,
         content: `Subject: Thank You for Your Interest – How Can I Help You?
 

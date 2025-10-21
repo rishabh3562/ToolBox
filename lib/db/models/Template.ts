@@ -7,10 +7,10 @@ const TemplateSchema = new Schema<ITemplate>(
     name: { type: String, required: true },
     category: {
       type: String,
-      enum: ["email", "blog", "social"],
       required: true,
     },
     content: { type: String, required: true },
+    tags: { type: [String], default: [] },
   },
   {
     timestamps: true,
