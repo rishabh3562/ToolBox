@@ -1,58 +1,64 @@
-import connectDB from '../connection';
-import Profile, { ProfileDocument } from '../models/Profile';
+import { connectDB } from '../connection';
+import Profile from '../models/Profile';
 import { Profile as IProfile } from '@/types/profile';
 
 export class ProfileService {
   static async createProfile(profileData: Omit<IProfile, 'id'>): Promise<IProfile> {
     await connectDB();
-    
+
     const profile = new Profile(profileData);
     const savedProfile = await profile.save();
-    
+    const { _id, ...rest } = savedProfile.toObject();
+
     return {
-      id: savedProfile._id.toString(),
-      ...savedProfile.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
   static async getAllProfiles(): Promise<IProfile[]> {
     await connectDB();
-    
+
     const profiles = await Profile.find({}).sort({ createdAt: -1 });
-    
-    return profiles.map(profile => ({
-      id: profile._id.toString(),
-      ...profile.toObject()
-    }));
+
+    return profiles.map(profile => {
+      const { _id, ...rest } = profile.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 
   static async getProfileById(id: string): Promise<IProfile | null> {
     await connectDB();
-    
+
     const profile = await Profile.findById(id);
-    
+
     if (!profile) return null;
-    
+
+    const { _id, ...rest } = profile.toObject();
     return {
-      id: profile._id.toString(),
-      ...profile.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
   static async updateProfile(id: string, updates: Partial<IProfile>): Promise<IProfile | null> {
     await connectDB();
-    
+
     const profile = await Profile.findByIdAndUpdate(
       id,
       { ...updates, updatedAt: new Date().toISOString() },
       { new: true }
     );
-    
+
     if (!profile) return null;
-    
+
+    const { _id, ...rest } = profile.toObject();
     return {
-      id: profile._id.toString(),
-      ...profile.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -80,10 +86,13 @@ export class ProfileService {
     }
 
     const profiles = await Profile.find(searchFilter).sort({ createdAt: -1 });
-    
-    return profiles.map(profile => ({
-      id: profile._id.toString(),
-      ...profile.toObject()
-    }));
+
+    return profiles.map(profile => {
+      const { _id, ...rest } = profile.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 }

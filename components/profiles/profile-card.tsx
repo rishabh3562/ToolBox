@@ -16,7 +16,7 @@ interface ProfileCardProps {
 
 export function ProfileCard({ profile, onEdit, onDelete }: ProfileCardProps) {
   const platform = getPlatform(profile.platform);
-  const PlatformIcon = platform ? Icons[platform.icon as keyof typeof Icons] : Icons.Globe;
+  const PlatformIcon = (platform ? Icons[platform.icon as keyof typeof Icons] : Icons.Globe) as React.ComponentType<{ className?: string }>;
 
   return (
     <Card className="p-6 hover:shadow-lg transition-shadow">

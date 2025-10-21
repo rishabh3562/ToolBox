@@ -52,7 +52,7 @@ export function CategoryTree({
         </div>
         {hasSubCategories && (
           <div className="pl-4">
-            {category.subCategories.map((subCategory) =>
+            {category.subCategories?.map((subCategory) =>
               renderCategory(subCategory, depth + 1)
             )}
           </div>

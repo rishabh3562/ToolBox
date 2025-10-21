@@ -1,5 +1,5 @@
-import connectDB from '../connection';
-import Template, { TemplateDocument } from '../models/Template';
+import { connectDB } from '../connection';
+import Template from '../models/Template';
 import { Template as ITemplate } from '@/types';
 
 export class TemplateService {
@@ -9,9 +9,10 @@ export class TemplateService {
     const template = new Template(templateData);
     const savedTemplate = await template.save();
     
+    const { _id, ...rest } = savedTemplate.toObject();
     return {
-      id: savedTemplate._id.toString(),
-      ...savedTemplate.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -20,10 +21,13 @@ export class TemplateService {
     
     const templates = await Template.find({}).sort({ createdAt: -1 });
     
-    return templates.map(template => ({
-      id: template._id.toString(),
-      ...template.toObject()
-    }));
+    return templates.map(template => {
+      const { _id, ...rest } = template.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 
   static async getTemplateById(id: string): Promise<ITemplate | null> {
@@ -33,9 +37,10 @@ export class TemplateService {
     
     if (!template) return null;
     
+    const { _id, ...rest } = template.toObject();
     return {
-      id: template._id.toString(),
-      ...template.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -50,9 +55,10 @@ export class TemplateService {
     
     if (!template) return null;
     
+    const { _id, ...rest } = template.toObject();
     return {
-      id: template._id.toString(),
-      ...template.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -68,10 +74,13 @@ export class TemplateService {
     
     const templates = await Template.find({ category }).sort({ createdAt: -1 });
     
-    return templates.map(template => ({
-      id: template._id.toString(),
-      ...template.toObject()
-    }));
+    return templates.map(template => {
+      const { _id, ...rest } = template.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 
   static async initializeDefaultTemplates(): Promise<void> {

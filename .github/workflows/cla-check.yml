@@ -16,31 +16,31 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const body = `## 📋 Contributor License Agreement (CLA)
+            const body = `## Contributor License Agreement (CLA)
 
-            Thank you for your contribution to ToolBox!
+            Thank you for your contribution to ToolBox.
 
             **By submitting this pull request, you automatically agree to our [Contributor License Agreement (CLA)](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CLA.md).**
 
-            ### ⚠️ Important Points:
+            ### Key Terms
 
-            - ✅ You grant the project owner exclusive commercial rights to this project
-            - ✅ You waive any claims to commercialization or royalties
-            - ✅ You retain rights to use your contributions for non-commercial purposes
-            - ✅ You confirm your contributions are your original work
-            - ✅ This agreement is automatic upon submission
+            - You grant the project owner exclusive commercial rights to this project
+            - You waive any claims to commercialization or royalties
+            - You retain rights to use your contributions for non-commercial purposes
+            - You confirm your contributions are your original work
+            - This agreement is automatic upon submission
 
-            ### 📖 Full Agreement
+            ### Full Agreement
 
-            Please read the complete [CLA](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CLA.md) for all terms and conditions.
+            Please review the complete [CLA](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CLA.md) for all terms and conditions.
 
-            ### ❓ Questions?
+            ### Questions
 
-            If you have questions about the CLA, please comment on this PR or open a discussion.
+            If you have questions about the CLA, please comment on this pull request or open a discussion.
 
             ---
 
-            **By keeping this PR open or updating it, you confirm your acceptance of the CLA.**`;
+            **By continuing with this pull request, you confirm your acceptance of the CLA.**`;
 
             // Check if we've already commented
             const comments = await github.rest.issues.listComments({
@@ -62,14 +62,3 @@ jobs:
                 body: body
               });
             }
-
-      - name: Add CLA Label
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: ['cla-required']
-            });

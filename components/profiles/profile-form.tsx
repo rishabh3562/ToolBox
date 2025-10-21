@@ -74,11 +74,11 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
               </SelectTrigger>
               <SelectContent>
                 {platforms.map((platform) => {
-                  const Icon = Icons[platform.icon as keyof typeof Icons];
+                  const Icon = Icons[platform.icon as keyof typeof Icons] as React.ComponentType<{ className?: string }>;
                   return (
                     <SelectItem key={platform.id} value={platform.id}>
                       <div className="flex items-center gap-2">
-                        <Icon className={`w-4 h-4 ${platform.color}`} />
+                        {Icon && <Icon className={`w-4 h-4 ${platform.color}`} />}
                         <span>{platform.name}</span>
                       </div>
                     </SelectItem>
