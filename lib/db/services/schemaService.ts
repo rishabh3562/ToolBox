@@ -1,5 +1,5 @@
-import connectDB from '../connection';
-import SchemaModel, { SchemaDocument } from '../models/Schema';
+import { connectDB } from '../connection';
+import SchemaModel from '../models/Schema';
 import { Schema as ISchema } from '@/types/schema';
 
 export class SchemaService {
@@ -9,9 +9,10 @@ export class SchemaService {
     const schema = new SchemaModel(schemaData);
     const savedSchema = await schema.save();
     
+    const { _id, ...rest } = savedSchema.toObject();
     return {
-      id: savedSchema._id.toString(),
-      ...savedSchema.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -20,10 +21,13 @@ export class SchemaService {
     
     const schemas = await SchemaModel.find({}).sort({ createdAt: -1 });
     
-    return schemas.map(schema => ({
-      id: schema._id.toString(),
-      ...schema.toObject()
-    }));
+    return schemas.map(schema => {
+      const { _id, ...rest } = schema.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 
   static async getSchemaById(id: string): Promise<ISchema | null> {
@@ -33,9 +37,10 @@ export class SchemaService {
     
     if (!schema) return null;
     
+    const { _id, ...rest } = schema.toObject();
     return {
-      id: schema._id.toString(),
-      ...schema.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -50,9 +55,10 @@ export class SchemaService {
     
     if (!schema) return null;
     
+    const { _id, ...rest } = schema.toObject();
     return {
-      id: schema._id.toString(),
-      ...schema.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -75,9 +81,12 @@ export class SchemaService {
 
     const schemas = await SchemaModel.find(searchFilter).sort({ createdAt: -1 });
     
-    return schemas.map(schema => ({
-      id: schema._id.toString(),
-      ...schema.toObject()
-    }));
+    return schemas.map(schema => {
+      const { _id, ...rest } = schema.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 }

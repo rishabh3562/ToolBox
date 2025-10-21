@@ -159,7 +159,7 @@ export default function ProfileTrackerPage() {
               All Platforms
             </TabsTrigger>
             {platforms.map((platform) => {
-              const Icon = Icons[platform.icon as keyof typeof Icons];
+              const Icon = Icons[platform.icon as keyof typeof Icons] as React.ComponentType<{ className?: string }>;
               return (
                 <TabsTrigger
                   key={platform.id}
@@ -167,7 +167,7 @@ export default function ProfileTrackerPage() {
                   onClick={() => setSelectedPlatform(platform.id as PlatformType)}
                   className="flex items-center gap-2"
                 >
-                  <Icon className={`w-4 h-4 ${platform.color}`} />
+                  {Icon && <Icon className={`w-4 h-4 ${platform.color}`} />}
                   {platform.name}
                 </TabsTrigger>
               );
