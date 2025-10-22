@@ -1,0 +1,28 @@
+# Global code owners
+* @georgioupanayiotis
+
+# GitHub workflows and CI/CD
+/.github/ @georgioupanayiotis
+
+# Core application files
+/app/ @georgioupanayiotis
+/components/ @georgioupanayiotis
+/lib/ @georgioupanayiotis
+
+# Configuration files
+/next.config.js @georgioupanayiotis
+/package.json @georgioupanayiotis
+/tsconfig.json @georgioupanayiotis
+/tailwind.config.ts @georgioupanayiotis
+
+# Documentation
+/README.md @georgioupanayiotis
+/CONTRIBUTING.md @georgioupanayiotis
+/CLA.md @georgioupanayiotis
+
+# Database and API related
+/lib/db/ @georgioupanayiotis
+/lib/gemini.ts @georgioupanayiotis
+
+# Types and schemas
+/types/ @georgioupanayiotis
