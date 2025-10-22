@@ -69,7 +69,7 @@ describe("Rate Limiting", () => {
         success: true,
         limit: 100,
         remaining: 99,
-        reset: new Date(Date.now() + 3600000),
+        reset: Date.now() + 3600000,
       });
 
       mockHandler.mockResolvedValue(new Response("OK"));
@@ -87,7 +87,7 @@ describe("Rate Limiting", () => {
         success: false,
         limit: 100,
         remaining: 0,
-        reset: new Date(Date.now() + 3600000),
+        reset: Date.now() + 3600000,
       });
 
       const response = await withRateLimit(mockRequest, mockHandler, "default");
@@ -106,7 +106,7 @@ describe("Rate Limiting", () => {
         success: true,
         limit: 60,
         remaining: 59,
-        reset: new Date(Date.now() + 60000),
+        reset: Date.now() + 60000,
       });
 
       mockHandler.mockResolvedValue(new Response("OK"));
@@ -126,7 +126,7 @@ describe("Rate Limiting", () => {
         success: true,
         limit: 10,
         remaining: 9,
-        reset: new Date(Date.now() + 60000),
+        reset: Date.now() + 60000,
       });
 
       mockHandler.mockResolvedValue(new Response("OK"));
@@ -193,7 +193,7 @@ describe("Rate Limit Error Responses", () => {
       success: false,
       limit: 10,
       remaining: 0,
-      reset: new Date("2024-01-01T12:00:00Z"),
+      reset: new Date("2024-01-01T12:00:00Z").getTime(),
     };
 
     const response = createRateLimitErrorResponse(result);

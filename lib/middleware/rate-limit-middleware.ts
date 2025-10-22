@@ -22,14 +22,19 @@ export async function withRateLimit(
     // If rate limit exceeded, return error response
     if (!result.success) {
       console.warn(`Rate limit exceeded for IP ${clientIP} on ${type} endpoint`);
-      return createRateLimitErrorResponse(result);
+      const errorResponse = createRateLimitErrorResponse(result);
+      return new NextResponse(errorResponse.body, {
+        status: errorResponse.status,
+        headers: errorResponse.headers,
+      });
     }
 
     // Execute the handler
     const response = await handler(request);
 
     // Add rate limit headers to successful responses
-    return addRateLimitHeaders(response, result);
+    addRateLimitHeaders(response, result);
+    return response;
   } catch (error) {
     console.error("Rate limiting error:", error);
     // If rate limiting fails, allow the request to proceed
@@ -73,7 +78,7 @@ export const rateLimitMiddleware = {
 };
 
 /**
- * Utility function to check rate limit without consuming it
+ * Utility function to check rate limit (consumes one unit)
  */
 export async function checkRateLimit(
   request: NextRequest,
@@ -82,7 +87,7 @@ export async function checkRateLimit(
   success: boolean;
   limit: number;
   remaining: number;
-  reset: Date;
+  reset: number;
 }> {
   const clientIP = getClientIP(request);
   const identifier = `${clientIP}:${type}`;

@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimitMiddleware } from "@/lib/middleware/rate-limit-middleware";
 
+// Helper function to sanitize user input
+const sanitizeInput = (input: string): string => {
+  return input.replace(/[<>'"]/g, (char) => {
+    const entities: { [key: string]: string } = {
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    };
+    return entities[char] || char;
+  }).trim().slice(0, 500); // Limit length
+};
+
 // POST /api/ai/generate - AI-powered code generation
 async function handleAIGenerate(request: NextRequest): Promise<NextResponse> {
   try {
@@ -24,32 +37,36 @@ async function handleAIGenerate(request: NextRequest): Promise<NextResponse> {
       );
     }
 
+    // Sanitize inputs
+    const sanitizedPrompt = sanitizeInput(prompt);
+    const sanitizedLanguage = language ? sanitizeInput(language) : "javascript";
+    
     // Simulate AI generation (replace with actual AI service)
     let generatedContent = "";
     
     switch (type) {
       case "code":
-        generatedContent = `// Generated ${language || "JavaScript"} code based on: ${prompt}\nfunction generatedFunction() {\n  // TODO: Implement based on prompt\n  console.log("Generated from: ${prompt}");\n}`;
+        generatedContent = `// Generated ${sanitizedLanguage} code based on: ${sanitizedPrompt}\nfunction generatedFunction() {\n  // TODO: Implement based on prompt\n  console.log("Generated from prompt");\n}`;
         break;
       case "template":
-        generatedContent = `<!-- Generated template for: ${prompt} -->\n<div class="{{className}}">\n  <h1>{{title}}</h1>\n  <p>{{description}}</p>\n</div>`;
+        generatedContent = `<!-- Generated template for: ${sanitizedPrompt} -->\n<div class="{{className}}">\n  <h1>{{title}}</h1>\n  <p>{{description}}</p>\n</div>`;
         break;
       case "snippet":
-        generatedContent = `// Snippet: ${prompt}\nconst result = () => {\n  // Implementation here\n  return "Generated snippet";\n};`;
+        generatedContent = `// Snippet: ${sanitizedPrompt}\nconst result = () => {\n  // Implementation here\n  return "Generated snippet";\n};`;
         break;
       case "documentation":
-        generatedContent = `# ${prompt}\n\n## Overview\nGenerated documentation for ${prompt}.\n\n## Usage\n\`\`\`${language || "javascript"}\n// Example usage\n\`\`\`\n\n## Parameters\n- param1: Description\n- param2: Description`;
+        generatedContent = `# ${sanitizedPrompt}\n\n## Overview\nGenerated documentation for ${sanitizedPrompt}.\n\n## Usage\n\`\`\`${sanitizedLanguage}\n// Example usage\n\`\`\`\n\n## Parameters\n- param1: Description\n- param2: Description`;
         break;
     }
 
     const result = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       prompt,
       type,
       language: language || "javascript",
       content: generatedContent,
       generatedAt: new Date().toISOString(),
-      model: "gpt-3.5-turbo", // Placeholder
+      model: "placeholder", // Update when real AI service is integrated
     };
 
     return NextResponse.json({

@@ -82,7 +82,7 @@ async function handleCreateSnippet(request: NextRequest): Promise<NextResponse> 
 
     // Simulate creating snippet in database
     const newSnippet = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       title,
       description: description || "",
       language: language.toLowerCase(),

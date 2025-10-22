@@ -41,8 +41,22 @@ async function handleGetTemplates(request: NextRequest): Promise<NextResponse> {
 // POST /api/templates - Create a new template
 async function handleCreateTemplate(request: NextRequest): Promise<NextResponse> {
   try {
-    const body = await request.json();
-    const { name, description, content, variables } = body;
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+    
+    const { name, description, content, variables } = (body as Record<string, unknown>) ?? {};
+    
+    if (typeof name !== "string" || typeof content !== "string") {
+      return NextResponse.json({ error: "Name and content are required" }, { status: 400 });
+    }
+    
+    if (variables != null && !Array.isArray(variables)) {
+      return NextResponse.json({ error: "variables must be an array of strings" }, { status: 400 });
+    }
 
     // Validate required fields
     if (!name || !content) {
@@ -54,11 +68,11 @@ async function handleCreateTemplate(request: NextRequest): Promise<NextResponse>
 
     // Simulate creating template in database
     const newTemplate = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name,
       description: description || "",
       content,
-      variables: variables || [],
+      variables: Array.isArray(variables) ? variables.map(String) : [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

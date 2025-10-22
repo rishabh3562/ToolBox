@@ -1,6 +1,5 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { LRUCache } from "lru-cache";
 
 // Rate limit configurations for different endpoints
 export const RATE_LIMIT_CONFIG = {
@@ -13,7 +12,23 @@ export const RATE_LIMIT_CONFIG = {
   upload: { requests: 20, window: "1m" }, // File upload endpoints
 } as const;
 
-// Create Redis instance for production or LRU cache for development
+// Helper function to parse window string to milliseconds
+function parseWindowToMs(window: string): number {
+  const match = /^(\d+)\s*([smhd])$/.exec(window);
+  if (!match) throw new Error(`Invalid window format: ${window}`);
+  
+  const value = Number(match[1]);
+  const unit = match[2];
+  
+  switch (unit) {
+    case 's': return value * 1000;
+    case 'm': return value * 60 * 1000;
+    case 'h': return value * 60 * 60 * 1000;
+    case 'd': return value * 24 * 60 * 60 * 1000;
+    default: throw new Error(`Invalid time unit: ${unit}`);
+  }
+}
+
 function createRateLimiter(config: { requests: number; window: string }) {
   // Check if we have Redis configuration
   const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
@@ -28,21 +43,40 @@ function createRateLimiter(config: { requests: number; window: string }) {
 
     return new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(config.requests, config.window),
+      limiter: Ratelimit.slidingWindow(config.requests, config.window as any),
       analytics: true,
+      ephemeralCache: new Map<string, number>(),
     });
   } else {
-    // Use in-memory cache for development
-    const cache = new LRUCache({
-      max: 1000,
-      ttl: 60000, // 1 minute
-    });
-
-    return new Ratelimit({
-      redis: cache as any,
-      limiter: Ratelimit.slidingWindow(config.requests, config.window),
-      analytics: false,
-    });
+    // Pure in-memory limiter for single-instance/dev environments
+    const windowMs = parseWindowToMs(config.window);
+    const limit = config.requests;
+    const buckets = new Map<string, number[]>(); // timestamps in ms
+    
+    return {
+      async limit(identifier: string) {
+        const now = Date.now();
+        const cutoff = now - windowMs;
+        const timestamps = (buckets.get(identifier) ?? []).filter(t => t > cutoff);
+        const allowed = timestamps.length < limit;
+        
+        if (allowed) {
+          timestamps.push(now);
+        }
+        buckets.set(identifier, timestamps);
+        
+        const remaining = Math.max(0, limit - timestamps.length);
+        const oldest = timestamps[0] ?? now;
+        const reset = oldest + windowMs;
+        
+        return { 
+          success: allowed, 
+          limit, 
+          remaining, 
+          reset 
+        };
+      },
+    };
   }
 }
 
@@ -81,21 +115,14 @@ export function addRateLimitHeaders(
     success: boolean;
     limit: number;
     remaining: number;
-    reset: Date;
+    reset: number;
   }
 ): Response {
-  const headers = new Headers(response.headers);
-  
-  headers.set("X-RateLimit-Limit", result.limit.toString());
-  headers.set("X-RateLimit-Remaining", result.remaining.toString());
-  headers.set("X-RateLimit-Reset", result.reset.getTime().toString());
-  headers.set("X-RateLimit-Policy", "sliding-window");
-
-  return new Response(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  });
+  response.headers.set("X-RateLimit-Limit", String(result.limit));
+  response.headers.set("X-RateLimit-Remaining", String(result.remaining));
+  response.headers.set("X-RateLimit-Reset", String(result.reset));
+  response.headers.set("X-RateLimit-Policy", "sliding-window");
+  return response;
 }
 
 // Rate limit exceeded error response
@@ -104,16 +131,16 @@ export function createRateLimitErrorResponse(
     success: boolean;
     limit: number;
     remaining: number;
-    reset: Date;
+    reset: number;
   }
 ): Response {
-  const retryAfter = Math.ceil((result.reset.getTime() - Date.now()) / 1000);
+  const retryAfter = Math.max(0, Math.ceil((result.reset - Date.now()) / 1000));
 
   const headers = new Headers({
     "Content-Type": "application/json",
     "X-RateLimit-Limit": result.limit.toString(),
     "X-RateLimit-Remaining": "0",
-    "X-RateLimit-Reset": result.reset.getTime().toString(),
+    "X-RateLimit-Reset": String(result.reset),
     "Retry-After": retryAfter.toString(),
   });
 
@@ -122,7 +149,7 @@ export function createRateLimitErrorResponse(
       error: "Rate limit exceeded",
       message: `Too many requests. Limit: ${result.limit} requests. Try again in ${retryAfter} seconds.`,
       retryAfter,
-      resetTime: result.reset.toISOString(),
+      resetTime: new Date(result.reset).toISOString(),
     }),
     {
       status: 429,

@@ -55,11 +55,22 @@ export const POST = rateLimitMiddleware.ai(handleAIGenerate);
 ```typescript
 import { withRateLimit } from "@/lib/middleware/rate-limit-middleware";
 
+// First, add to lib/rate-limit.ts:
+// export const RATE_LIMIT_CONFIG = { 
+//   ...existing config,
+//   custom: { requests: 25, window: "1m" } 
+// } as const;
+//
+// export const rateLimiters = {
+//   ...existing limiters,
+//   custom: createRateLimiter(RATE_LIMIT_CONFIG.custom)
+// };
+
 export async function GET(request: NextRequest) {
   return withRateLimit(request, async (req) => {
     // Your handler logic
     return NextResponse.json({ success: true });
-  }, "custom-type");
+  }, "custom"); // Must match a key in rateLimiters
 }
 ```
 
@@ -112,8 +123,10 @@ UPSTASH_REDIS_REST_TOKEN=your-redis-token
 
 ### Storage Options
 
-1. **Redis (Production)**: Distributed rate limiting across multiple instances
-2. **In-Memory (Development)**: LRU cache for single-instance deployments
+1. **Redis (Production)**: Distributed rate limiting using Upstash Redis for multiple instances
+2. **In-Memory (Development)**: Custom sliding-window limiter for single-instance deployments
+
+**Note**: Upstash Ratelimit requires a Redis backend. The in-memory option is a separate custom implementation, not an LRU cache passed to Upstash.
 
 ## IP Address Detection
 
