@@ -10,7 +10,7 @@ const VariableSchema = new Schema<IVariable>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Model (safe for hot reloads)

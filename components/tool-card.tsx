@@ -1,15 +1,17 @@
-import { Tool } from '@/types/tool';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import * as Icons from 'lucide-react';
+import { Tool } from "@/types/tool";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import * as Icons from "lucide-react";
 
 interface ToolCardProps {
   tool: Tool;
 }
 
 export function ToolCard({ tool }: ToolCardProps) {
-  const Icon = Icons[tool.icon as keyof typeof Icons] as React.ComponentType<{ className?: string }>;
+  const Icon = Icons[tool.icon as keyof typeof Icons] as React.ComponentType<{
+    className?: string;
+  }>;
 
   return (
     <Card className="p-6 flex flex-col h-full">

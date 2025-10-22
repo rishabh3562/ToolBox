@@ -22,6 +22,7 @@ This creates `.github/hacktoberfest-issues/ALL.md` with all issues.
 ### Trigger Workflow
 
 The workflow runs automatically when:
+
 - You push changes to `generate-issues.js`
 - You push changes to `ALL.md`
 - You manually trigger via Actions tab
@@ -53,16 +54,16 @@ Describe the problem...
 
 ## Categories
 
-| Category | Emoji | Label | Use For |
-|----------|-------|-------|---------|
-| security | 🔒 | security | Security vulnerabilities, exposed secrets |
-| bug | 🐛 | bug | Code bugs, runtime errors |
-| feature | ✨ | enhancement | New features, improvements |
-| docs | 📚 | documentation | Documentation, JSDoc, README |
-| refactor | ♻️ | refactor | Code cleanup, type safety |
-| test | 🧪 | test | Adding tests, test coverage |
-| a11y | ♿ | accessibility | ARIA labels, keyboard nav |
-| perf | ⚡ | performance | Performance optimizations |
+| Category | Emoji | Label         | Use For                                   |
+| -------- | ----- | ------------- | ----------------------------------------- |
+| security | 🔒    | security      | Security vulnerabilities, exposed secrets |
+| bug      | 🐛    | bug           | Code bugs, runtime errors                 |
+| feature  | ✨    | enhancement   | New features, improvements                |
+| docs     | 📚    | documentation | Documentation, JSDoc, README              |
+| refactor | ♻️    | refactor      | Code cleanup, type safety                 |
+| test     | 🧪    | test          | Adding tests, test coverage               |
+| a11y     | ♿    | accessibility | ARIA labels, keyboard nav                 |
+| perf     | ⚡    | performance   | Performance optimizations                 |
 
 ## Workflow Features
 
@@ -112,15 +113,18 @@ grep -c "^---$" .github/hacktoberfest-issues/ALL.md
 ## Troubleshooting
 
 **Issues not created?**
+
 - Check workflow logs in Actions tab
 - Verify labels exist in repo (sync-labels job)
 - Check for duplicate issue titles
 
 **Wrong number of issues?**
+
 - Count `---` delimiters (should be N-1 for N issues)
 - Check for blank lines breaking title extraction
 
 **Labels not showing?**
+
 - Run sync-labels job first
 - Verify `.github/labels.yml` has correct format
 
@@ -135,6 +139,7 @@ You can extend this for other projects:
 5. Set up the workflow
 
 Perfect for:
+
 - Hacktoberfest preparation
 - Open source project onboarding
 - Issue template management

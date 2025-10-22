@@ -14,7 +14,7 @@ const TemplateSchema = new Schema<ITemplate>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Ensure mongoose.models exists

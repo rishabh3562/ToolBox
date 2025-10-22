@@ -1,10 +1,10 @@
-import { streamGeminiResponse } from '@/lib/gemini';
-import { Schema, DatabaseType } from '@/types/schema';
+import { streamGeminiResponse } from "@/lib/gemini";
+import { Schema, DatabaseType } from "@/types/schema";
 
 export async function generateSchema(
   prompt: string,
   dbType: DatabaseType,
-  onProgress: (response: { text: string; done: boolean }) => void
+  onProgress: (response: { text: string; done: boolean }) => void,
 ) {
   const context = `
     You are a database schema expert. Generate a complete database schema based on the user's description.
@@ -57,43 +57,44 @@ export async function generateSchema(
 }
 
 export function generateSQLCode(schema: Schema): string {
-  let sql = '';
+  let sql = "";
 
   // Generate CREATE TABLE statements
   schema.tables.forEach((table) => {
     sql += `CREATE TABLE ${table.name} (\n`;
-    
+
     // Fields
     const fields = table.fields.map((field) => {
       let fieldDef = `  ${field.name} ${field.type}`;
       if (field.length) fieldDef += `(${field.length})`;
-      if (field.primaryKey) fieldDef += ' PRIMARY KEY';
-      if (field.autoIncrement) fieldDef += ' AUTO_INCREMENT';
-      if (!field.nullable) fieldDef += ' NOT NULL';
+      if (field.primaryKey) fieldDef += " PRIMARY KEY";
+      if (field.autoIncrement) fieldDef += " AUTO_INCREMENT";
+      if (!field.nullable) fieldDef += " NOT NULL";
       if (field.defaultValue) fieldDef += ` DEFAULT ${field.defaultValue}`;
-      if (field.unique) fieldDef += ' UNIQUE';
+      if (field.unique) fieldDef += " UNIQUE";
       return fieldDef;
     });
 
     // Foreign Keys
     if (table.foreignKeys) {
       table.foreignKeys.forEach((fk) => {
-        const constraint = `  CONSTRAINT ${fk.name} FOREIGN KEY (${fk.fields.join(', ')}) ` +
-          `REFERENCES ${fk.references.table}(${fk.references.fields.join(', ')})`;
+        const constraint =
+          `  CONSTRAINT ${fk.name} FOREIGN KEY (${fk.fields.join(", ")}) ` +
+          `REFERENCES ${fk.references.table}(${fk.references.fields.join(", ")})`;
         fields.push(constraint);
       });
     }
 
-    sql += fields.join(',\n');
-    sql += '\n);\n\n';
+    sql += fields.join(",\n");
+    sql += "\n);\n\n";
 
     // Indexes
     if (table.indexes) {
       table.indexes.forEach((index) => {
-        const indexType = index.type ? `${index.type} ` : '';
-        sql += `CREATE ${indexType}INDEX ${index.name} ON ${table.name} (${index.fields.join(', ')});\n`;
+        const indexType = index.type ? `${index.type} ` : "";
+        sql += `CREATE ${indexType}INDEX ${index.name} ON ${table.name} (${index.fields.join(", ")});\n`;
       });
-      sql += '\n';
+      sql += "\n";
     }
   });
 

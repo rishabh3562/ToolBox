@@ -5,28 +5,28 @@
  * Generates GitHub issues from analysis of the codebase
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Issue categories
 const CATEGORIES = {
-  security: { prefix: 'security', label: 'security' },
-  bug: { prefix: 'fix', label: 'bug' },
-  feature: { prefix: 'feat', label: 'enhancement' },
-  docs: { prefix: 'docs', label: 'documentation' },
-  refactor: { prefix: 'refactor', label: 'refactor' },
-  test: { prefix: 'test', label: 'test' },
-  a11y: { prefix: 'a11y', label: 'accessibility' },
-  perf: { prefix: 'perf', label: 'performance' }
+  security: { prefix: "security", label: "security" },
+  bug: { prefix: "fix", label: "bug" },
+  feature: { prefix: "feat", label: "enhancement" },
+  docs: { prefix: "docs", label: "documentation" },
+  refactor: { prefix: "refactor", label: "refactor" },
+  test: { prefix: "test", label: "test" },
+  a11y: { prefix: "a11y", label: "accessibility" },
+  perf: { prefix: "perf", label: "performance" },
 };
 
 // Issue templates - Add more issues here to auto-generate
 const ISSUES = [
   // SECURITY
   {
-    category: 'security',
-    title: 'Move MongoDB connection string to environment variables',
-    difficulty: 'good first issue',
+    category: "security",
+    title: "Move MongoDB connection string to environment variables",
+    difficulty: "good first issue",
     body: `## Description
 
 The MongoDB connection string containing username and password is hardcoded directly in the source code. This is a critical security vulnerability as it exposes database credentials in the repository history and to anyone with read access.
@@ -67,13 +67,13 @@ The solution should:
 - MongoDB connection string is read from environment variable
 - Application fails gracefully with helpful error message if MONGODB_URI is not configured
 - No hardcoded credentials remain in source code or git history
-- Documentation clearly describes environment setup process`
+- Documentation clearly describes environment setup process`,
   },
 
   {
-    category: 'security',
-    title: 'Prevent .env files from being tracked in version control',
-    difficulty: 'good first issue',
+    category: "security",
+    title: "Prevent .env files from being tracked in version control",
+    difficulty: "good first issue",
     body: `## Description
 
 The \`.env\` file containing sensitive API keys and configuration is currently tracked in version control. This file should never be committed as it exposes secrets to anyone with repository access.
@@ -121,14 +121,14 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 - \`.env\` file is not tracked by git
 - \`.env.example\` exists with all required variables documented
 - README includes clear setup instructions
-- No sensitive data remains in git history`
+- No sensitive data remains in git history`,
   },
 
   // FEATURES
   {
-    category: 'feature',
-    title: 'Implement dynamic category creation in Snippet Library',
-    difficulty: 'help wanted',
+    category: "feature",
+    title: "Implement dynamic category creation in Snippet Library",
+    difficulty: "help wanted",
     body: `## Feature Request
 Add ability to dynamically create and manage categories in the Snippet Library.
 
@@ -146,13 +146,13 @@ Currently the category tree has an \`onAdd\` handler but it's not implemented.
 ## Acceptance Criteria
 - Users can add nested categories
 - Categories persist to database
-- UI updates without page reload`
+- UI updates without page reload`,
   },
 
   {
-    category: 'feature',
-    title: 'Create API routes for database operations',
-    difficulty: 'help wanted',
+    category: "feature",
+    title: "Create API routes for database operations",
+    difficulty: "help wanted",
     body: `## Problem
 All database operations happen client-side via services. This is a security risk.
 
@@ -173,14 +173,14 @@ Each route should:
 ## Acceptance Criteria
 - All DB operations go through API routes
 - Client-side services call API routes instead of direct DB access
-- Proper error handling and validation`
+- Proper error handling and validation`,
   },
 
   // CODE QUALITY
   {
-    category: 'refactor',
-    title: 'Remove any types and improve type safety',
-    difficulty: 'good first issue',
+    category: "refactor",
+    title: "Remove any types and improve type safety",
+    difficulty: "good first issue",
     body: `## Problem
 Multiple files use \`any\` type which bypasses TypeScript safety.
 
@@ -197,13 +197,13 @@ Multiple files use \`any\` type which bypasses TypeScript safety.
 
 ## Acceptance Criteria
 - Zero \`any\` types in codebase
-- All functions have proper type signatures`
+- All functions have proper type signatures`,
   },
 
   {
-    category: 'bug',
-    title: 'Remove hardcoded personal data from default variables',
-    difficulty: 'good first issue',
+    category: "bug",
+    title: "Remove hardcoded personal data from default variables",
+    difficulty: "good first issue",
     body: `## Problem
 Default variables contain hardcoded personal information in \`lib/db/services/variableService.ts:60-115\`
 
@@ -221,14 +221,14 @@ value: "https://dubeyrishabh108.vercel.app/home",  // Personal URL
 
 ## Acceptance Criteria
 - No personal information in default variables
-- Placeholders are clear and instructive`
+- Placeholders are clear and instructive`,
   },
 
   // TESTING
   {
-    category: 'test',
-    title: 'Add unit tests for database services',
-    difficulty: 'help wanted',
+    category: "test",
+    title: "Add unit tests for database services",
+    difficulty: "help wanted",
     body: `## Problem
 No tests exist for database services.
 
@@ -260,14 +260,14 @@ describe('TemplateService', () => {
 
 ## Acceptance Criteria
 - \`npm test\` runs and passes
-- At least 80% code coverage for services`
+- At least 80% code coverage for services`,
   },
 
   // DOCUMENTATION
   {
-    category: 'docs',
-    title: 'Add JSDoc comments to all service methods',
-    difficulty: 'good first issue',
+    category: "docs",
+    title: "Add JSDoc comments to all service methods",
+    difficulty: "good first issue",
     body: `## Problem
 Service methods lack documentation making the codebase hard to understand.
 
@@ -296,14 +296,14 @@ static async createTemplate(templateData: Omit<ITemplate, 'id'>): Promise<ITempl
 
 ## Acceptance Criteria
 - All public methods have JSDoc comments
-- Parameters, return values, and exceptions documented`
+- Parameters, return values, and exceptions documented`,
   },
 
   // ACCESSIBILITY
   {
-    category: 'a11y',
-    title: 'Add ARIA labels to icon-only buttons',
-    difficulty: 'good first issue',
+    category: "a11y",
+    title: "Add ARIA labels to icon-only buttons",
+    difficulty: "good first issue",
     body: `## Problem
 Icon-only buttons lack ARIA labels making them inaccessible to screen readers.
 
@@ -331,13 +331,13 @@ Icon-only buttons lack ARIA labels making them inaccessible to screen readers.
 
 ## Acceptance Criteria
 - All icon buttons have descriptive aria-labels
-- Screen reader announces button purpose correctly`
+- Screen reader announces button purpose correctly`,
   },
 
   {
-    category: 'a11y',
-    title: 'Add keyboard navigation to interactive card components',
-    difficulty: 'good first issue',
+    category: "a11y",
+    title: "Add keyboard navigation to interactive card components",
+    difficulty: "good first issue",
     body: `## Problem
 Interactive cards use \`onClick\` on divs without keyboard support.
 
@@ -369,14 +369,14 @@ Interactive cards use \`onClick\` on divs without keyboard support.
 
 ## Acceptance Criteria
 - Cards are keyboard accessible (Tab to focus, Enter to activate)
-- Focus indicators are visible`
+- Focus indicators are visible`,
   },
 
   // PERFORMANCE
   {
-    category: 'perf',
-    title: 'Add database indexes for search queries',
-    difficulty: 'help wanted',
+    category: "perf",
+    title: "Add database indexes for search queries",
+    difficulty: "help wanted",
     body: `## Problem
 Search queries use regex without indexes, causing slow searches.
 
@@ -399,14 +399,14 @@ Model.find({ $text: { $search: query } })
 
 ## Acceptance Criteria
 - Search performance improved by >50%
-- Indexes added to all searchable fields`
+- Indexes added to all searchable fields`,
   },
 
   // MORE FEATURES
   {
-    category: 'feature',
-    title: 'Add error boundary component for better error handling',
-    difficulty: 'good first issue',
+    category: "feature",
+    title: "Add error boundary component for better error handling",
+    difficulty: "good first issue",
     body: `## Problem
 No React Error Boundary exists to catch component errors gracefully.
 
@@ -454,13 +454,13 @@ export class ErrorBoundary extends React.Component {
 
 ## Acceptance Criteria
 - App shows friendly error message instead of crashing
-- User can recover from errors`
+- User can recover from errors`,
   },
 
   {
-    category: 'feature',
-    title: 'Implement dynamic tag filtering in Snippet Library',
-    difficulty: 'good first issue',
+    category: "feature",
+    title: "Implement dynamic tag filtering in Snippet Library",
+    difficulty: "good first issue",
     body: `## Problem
 Tags are hardcoded in \`app/tools/snippet-library/page.tsx:149-157\`
 
@@ -473,13 +473,13 @@ Tags are hardcoded in \`app/tools/snippet-library/page.tsx:149-157\`
 ## Acceptance Criteria
 - Tags are generated from snippet data
 - Users can filter by multiple tags
-- Tag counts are accurate`
+- Tag counts are accurate`,
   },
 
   {
-    category: 'feature',
-    title: 'Add confirmation dialog for destructive actions',
-    difficulty: 'good first issue',
+    category: "feature",
+    title: "Add confirmation dialog for destructive actions",
+    difficulty: "good first issue",
     body: `## Problem
 Delete operations happen without confirmation.
 
@@ -495,14 +495,14 @@ Delete operations happen without confirmation.
 
 ## Acceptance Criteria
 - All delete actions require confirmation
-- User sees what they're deleting`
+- User sees what they're deleting`,
   },
 
   // CI/CD
   {
-    category: 'feature',
-    title: 'Add GitHub Actions workflow for build and lint',
-    difficulty: 'good first issue',
+    category: "feature",
+    title: "Add GitHub Actions workflow for build and lint",
+    difficulty: "good first issue",
     body: `## Problem
 No CI/CD pipeline to verify PRs.
 
@@ -536,36 +536,36 @@ jobs:
 
 ## Acceptance Criteria
 - Workflow runs on all PRs
-- PRs blocked if build/lint fails`
-  }
+- PRs blocked if build/lint fails`,
+  },
 ];
 
 // Generate markdown file
 function generateMarkdown() {
-  let markdown = '';
+  let markdown = "";
 
   ISSUES.forEach((issue, index) => {
     const category = CATEGORIES[issue.category];
 
     // Add delimiter before each issue except the first
     if (index > 0) {
-      markdown += '\n---\n\n';
+      markdown += "\n---\n\n";
     }
 
     // Title - no emoji, standard syntax
     markdown += `# ${issue.title}\n\n`;
 
     // Body
-    markdown += issue.body + '\n';
+    markdown += issue.body + "\n";
   });
 
   return markdown;
 }
 
 // Main execution
-const outputPath = path.join(__dirname, '..', 'hacktoberfest-issues', 'ALL.md');
+const outputPath = path.join(__dirname, "..", "hacktoberfest-issues", "ALL.md");
 const markdown = generateMarkdown();
 
-fs.writeFileSync(outputPath, markdown, 'utf8');
+fs.writeFileSync(outputPath, markdown, "utf8");
 console.log(`✅ Generated ${ISSUES.length} issues in ${outputPath}`);
 console.log(`\nRun the workflow to create GitHub issues!`);

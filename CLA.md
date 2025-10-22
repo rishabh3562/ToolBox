@@ -5,6 +5,7 @@
 **By contributing to ToolBox, you automatically agree to this Contributor License Agreement.**
 
 This includes, but is not limited to:
+
 - Submitting pull requests
 - Opening or commenting on issues
 - Submitting code reviews
@@ -23,6 +24,7 @@ Thank you for your interest in contributing to ToolBox ("the Project"), owned an
 ### 1. Definitions
 
 **"Contribution"** means any original work of authorship, including:
+
 - Code, documentation, or configuration files
 - Bug reports, feature requests, or technical discussions
 - Code reviews or design suggestions
@@ -58,6 +60,7 @@ You grant to the Owner and recipients a **perpetual, worldwide, non-exclusive, n
 **You retain full ownership and copyright** of your Contributions. This agreement only grants the Owner permission to use your work; it does not transfer ownership.
 
 **However:**
+
 - You retain ownership for **non-commercial use only**
 - All commercial rights are granted exclusively to the Owner
 - You may reuse your own code in other non-commercial projects
@@ -84,6 +87,7 @@ Your Contributions are provided **"AS IS"**, WITHOUT WARRANTIES OR CONDITIONS OF
 ### 9. Scope of This Agreement
 
 This agreement applies to:
+
 - All contributions submitted after this CLA was published
 - All future contributions you make to this project
 - Contributions made through any medium (GitHub, email, forum, etc.)
@@ -151,6 +155,7 @@ A: Yes, you retain copyright and can reuse your code in other projects for non-c
 ## Summary (Not legally binding - read full agreement above)
 
 By contributing to ToolBox, you agree that:
+
 - ✅ You **retain copyright ownership** of your contributions
 - ✅ You grant the Owner **exclusive commercial rights** to the project
 - ✅ **Only the Owner** can monetize or commercialize the project

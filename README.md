@@ -21,6 +21,7 @@ ToolBox is revolutionizing how developers create and share productivity tools. W
 ## ✨ Core Features
 
 ### 🎯 Current Features
+
 - **🔐 User Authentication** - Secure login with GitHub/Google OAuth (Coming Soon)
 - **💾 Personal Storage** - Auth-based data storage - your templates, snippets, and tools are private by default
 - **⚡ Lightning Fast** - Optimized performance with tools running directly in your browser
@@ -30,6 +31,7 @@ ToolBox is revolutionizing how developers create and share productivity tools. W
 - **🛡️ Type Safe** - Built with TypeScript for reliability and superior developer experience
 
 ### 🚀 Roadmap (Community Contributions Welcome!)
+
 - **🔌 Plugin Marketplace** - Discover and install community-created tools
 - **👥 Real-time Collaboration** - Work together on templates and snippets
 - **🤖 AI-Powered Tools** - Intelligent code suggestions and automation
@@ -40,27 +42,33 @@ ToolBox is revolutionizing how developers create and share productivity tools. W
 ## 🛠️ Built-in Tools
 
 ### Template Manager
+
 Create, organize, and manage reusable code templates with variable support. Perfect for boilerplate code, configuration files, and documentation templates.
 
 ![Template Manager](https://github.com/user-attachments/assets/ec633bab-d9e5-453f-9740-5ca5f91578be)
 
 ### Markdown Editor
+
 Rich markdown editing experience with live preview, syntax highlighting, and export capabilities.
 
 ![Markdown Editor](https://github.com/user-attachments/assets/8d39f8f0-e0cb-4096-a9a9-d416838c12a9)
 
 ### Schema Generator
+
 Generate database schemas, TypeScript types, and validation schemas with AI assistance.
 
 ![Schema Generator](https://github.com/user-attachments/assets/51cb3b68-0f24-4206-a910-45f19f6a5a80)
 
 ### Snippet Library
+
 Save and organize code snippets with syntax highlighting for quick reference and reuse.
 
 ### Profile Tracker
+
 Track and manage your development profiles and configurations across different platforms and environments.
 
 ### GitHub Helper
+
 Streamline your GitHub workflow with helpful utilities for repositories, issues, and pull requests.
 
 ## 🚀 Quick Start
@@ -74,17 +82,20 @@ Streamline your GitHub workflow with helpful utilities for repositories, issues,
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/rishabh3562/ToolBox.git
 cd ToolBox
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 # Copy the example environment file
 cp .env.example .env
@@ -95,6 +106,7 @@ cp .env.example .env
 ```
 
 4. Run the development server:
+
 ```bash
 npm run dev
 ```
@@ -179,31 +191,37 @@ We're participating in Hacktoberfest! Check out our [curated issues for contribu
 We especially need help with:
 
 #### 🔐 **Authentication & Privacy** (Critical)
+
 - Implementing NextAuth.js with GitHub/Google OAuth
 - Migrating to user-scoped database architecture
 - Building privacy controls and data isolation
 
 #### 🔌 **Plugin Architecture** (Game-Changer)
+
 - Designing plugin API and manifest format
 - Building plugin loader and sandbox environment
 - Creating plugin SDK and documentation
 
 #### 🛒 **Tool Marketplace** (Core Vision)
+
 - Building tool discovery and submission system
 - Implementing ratings, reviews, and categories
 - Creating tool analytics dashboard
 
 #### 👥 **Collaboration Features** (Exciting)
+
 - Real-time editing with WebSockets
 - Team workspaces and sharing
 - Live presence indicators
 
 #### 🤖 **AI Integration** (Innovative)
+
 - Expanding AI features beyond schema generation
 - Code suggestions and auto-completion
 - Intelligent search and recommendations
 
 #### 📱 **Mobile & Cross-Platform** (Expanding Reach)
+
 - React Native or Capacitor mobile apps
 - PWA implementation
 - Offline functionality
@@ -269,12 +287,14 @@ For commercial licensing inquiries, contact: @rishabh3562 on GitHub
 ## 🎯 Roadmap to Democratization
 
 ### Phase 1: Foundation (Q1 2025) 🏗️
+
 - [x] Core tool infrastructure
 - [ ] User Authentication (GitHub, Google OAuth)
 - [ ] User-scoped data storage with privacy controls
 - [ ] User profiles and preferences
 
 ### Phase 2: Community Platform (Q2 2025) 👥
+
 - [ ] Tool Marketplace for discovery
 - [ ] Plugin architecture for community tools
 - [ ] Tool submission and approval workflow
@@ -282,6 +302,7 @@ For commercial licensing inquiries, contact: @rishabh3562 on GitHub
 - [ ] Social features (follow, like, share)
 
 ### Phase 3: Collaboration & Scale (Q3 2025) 🚀
+
 - [ ] Real-time collaboration features
 - [ ] Team workspaces and organizations
 - [ ] Advanced search and discovery
@@ -289,6 +310,7 @@ For commercial licensing inquiries, contact: @rishabh3562 on GitHub
 - [ ] Mobile applications (iOS/Android)
 
 ### Phase 4: Intelligence & Expansion (Q4 2025) 🤖
+
 - [ ] AI-powered tool suggestions
 - [ ] Automated code generation
 - [ ] Advanced analytics and insights
@@ -298,6 +320,7 @@ For commercial licensing inquiries, contact: @rishabh3562 on GitHub
 ## ⭐ Show Your Support
 
 If ToolBox helps improve your workflow, please consider:
+
 - Giving it a star on GitHub
 - Sharing it with your network
 - Contributing new tools or features
@@ -307,4 +330,4 @@ If ToolBox helps improve your workflow, please consider:
 
 **Made with ❤️ for developers, by developers**
 
-*Building the ultimate toolkit for modern development workflows.*
+_Building the ultimate toolkit for modern development workflows._

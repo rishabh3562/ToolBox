@@ -1,16 +1,19 @@
-'use client';
+"use client";
 
-import { Variable } from '@/types';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
+import { Variable } from "@/types";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 
 interface VariableFormProps {
   variables: Variable[];
   onVariableChange: (key: string, value: string) => void;
 }
 
-export function VariableForm({ variables, onVariableChange }: VariableFormProps) {
+export function VariableForm({
+  variables,
+  onVariableChange,
+}: VariableFormProps) {
   return (
     <Card className="p-6">
       <div className="space-y-6">

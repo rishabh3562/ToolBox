@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Wrench, Github } from 'lucide-react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Wrench, Github } from "lucide-react";
 
 const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Tools', href: '/tools' },
+  { name: "Home", href: "/" },
+  { name: "Tools", href: "/tools" },
 ];
 
 export function SiteHeader() {
@@ -29,7 +29,9 @@ export function SiteHeader() {
                 href={item.href}
                 className={cn(
                   "transition-colors hover:text-foreground/80",
-                  pathname === item.href ? "text-foreground" : "text-foreground/60"
+                  pathname === item.href
+                    ? "text-foreground"
+                    : "text-foreground/60",
                 )}
               >
                 {item.name}

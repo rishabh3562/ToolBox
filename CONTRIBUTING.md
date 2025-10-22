@@ -38,42 +38,48 @@ We're actively seeking contributors to help with these **critical features** tha
 ### 🔥 **Most Needed** (Pick These First!)
 
 #### 1. **User Authentication System** ⭐⭐⭐
-   - **Why**: Foundation for all user-specific features
-   - **Tech**: NextAuth.js, GitHub OAuth, Google OAuth
-   - **Impact**: CRITICAL - Enables everything else
-   - **Issues**: [#auth](https://github.com/rishabh3562/ToolBox/labels/authentication)
+
+- **Why**: Foundation for all user-specific features
+- **Tech**: NextAuth.js, GitHub OAuth, Google OAuth
+- **Impact**: CRITICAL - Enables everything else
+- **Issues**: [#auth](https://github.com/rishabh3562/ToolBox/labels/authentication)
 
 #### 2. **User-Scoped Data Storage** ⭐⭐⭐
-   - **Why**: Privacy and data isolation for users
-   - **Tech**: MongoDB schema updates, migration scripts
-   - **Impact**: CRITICAL - Required for multi-user support
-   - **Issues**: [#database](https://github.com/rishabh3562/ToolBox/labels/database)
+
+- **Why**: Privacy and data isolation for users
+- **Tech**: MongoDB schema updates, migration scripts
+- **Impact**: CRITICAL - Required for multi-user support
+- **Issues**: [#database](https://github.com/rishabh3562/ToolBox/labels/database)
 
 #### 3. **Tool Marketplace** ⭐⭐⭐
-   - **Why**: Core vision - community tool discovery
-   - **Tech**: Tool submission, discovery UI, search
-   - **Impact**: CRITICAL - The heart of democratization
-   - **Issues**: [#marketplace](https://github.com/rishabh3562/ToolBox/labels/marketplace)
+
+- **Why**: Core vision - community tool discovery
+- **Tech**: Tool submission, discovery UI, search
+- **Impact**: CRITICAL - The heart of democratization
+- **Issues**: [#marketplace](https://github.com/rishabh3562/ToolBox/labels/marketplace)
 
 ### 🚀 **High Impact**
 
 #### 4. **Plugin Architecture**
-   - **Why**: Let developers build tools without code access
-   - **Tech**: Plugin API, manifest format, SDK
-   - **Impact**: HIGH - Scales community contributions
-   - **Issues**: [#plugins](https://github.com/rishabh3562/ToolBox/labels/plugins)
+
+- **Why**: Let developers build tools without code access
+- **Tech**: Plugin API, manifest format, SDK
+- **Impact**: HIGH - Scales community contributions
+- **Issues**: [#plugins](https://github.com/rishabh3562/ToolBox/labels/plugins)
 
 #### 5. **Real-time Collaboration**
-   - **Why**: Differentiate from competitors
-   - **Tech**: WebSockets, operational transformation
-   - **Impact**: HIGH - Enables team features
-   - **Issues**: [#collaboration](https://github.com/rishabh3562/ToolBox/labels/collaboration)
+
+- **Why**: Differentiate from competitors
+- **Tech**: WebSockets, operational transformation
+- **Impact**: HIGH - Enables team features
+- **Issues**: [#collaboration](https://github.com/rishabh3562/ToolBox/labels/collaboration)
 
 #### 6. **Testing Infrastructure**
-   - **Why**: Code quality and maintainability
-   - **Tech**: Jest, Playwright, CI/CD
-   - **Impact**: HIGH - Essential for reliability
-   - **Issues**: [#testing](https://github.com/rishabh3562/ToolBox/labels/testing)
+
+- **Why**: Code quality and maintainability
+- **Tech**: Jest, Playwright, CI/CD
+- **Impact**: HIGH - Essential for reliability
+- **Issues**: [#testing](https://github.com/rishabh3562/ToolBox/labels/testing)
 
 ### 💡 **Great for New Contributors**
 
@@ -94,6 +100,7 @@ Check out our [Hacktoberfest issues](https://github.com/rishabh3562/ToolBox/labe
 **By contributing to ToolBox, you automatically agree to our [Contributor License Agreement (CLA)](CLA.md).**
 
 This means:
+
 - ✓ **You retain full copyright** to your contributions
 - ✓ You grant ToolBox permission to use your contributions in both **open source and commercial versions**
 - ✓ **ONLY the Owner (Rishabh Dubey)** can monetize or commercialize the project
@@ -106,6 +113,7 @@ This means:
 ### Proprietary License
 
 This project is licensed under a **Proprietary License** (see [LICENSE](LICENSE)). This means:
+
 - ✅ You may view and study the source code
 - ✅ You may fork to contribute back to the original project
 - ❌ You may NOT redistribute the software
@@ -131,28 +139,33 @@ By participating in this project, you agree to be respectful and professional in
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/ToolBox.git
    cd ToolBox
    ```
 
 3. Add the upstream repository:
+
    ```bash
    git remote add upstream https://github.com/rishabh3562/ToolBox.git
    ```
 
 4. Install dependencies:
+
    ```bash
    npm install
    ```
 
 5. Create a `.env` file in the root directory with required environment variables:
+
    ```env
    MONGODB_URI=your_mongodb_connection_string
    NEXT_PUBLIC_API_URL=http://localhost:3000
    ```
 
 6. Run the development server:
+
    ```bash
    npm run dev
    ```
@@ -176,6 +189,7 @@ We welcome various types of contributions:
 ## Development Workflow
 
 1. **Sync your fork** with upstream before starting work:
+
    ```bash
    git checkout main
    git fetch upstream
@@ -183,6 +197,7 @@ We welcome various types of contributions:
    ```
 
 2. **Create a new branch** for your work:
+
    ```bash
    git checkout -b feature/your-feature-name
    # or
@@ -192,6 +207,7 @@ We welcome various types of contributions:
 3. **Make your changes** following the coding standards
 
 4. **Test your changes**:
+
    ```bash
    npm run build
    npm run lint
@@ -200,6 +216,7 @@ We welcome various types of contributions:
 5. **Commit your changes** using conventional commit messages
 
 6. **Push to your fork**:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -306,6 +323,7 @@ refactor(api): simplify error handling logic
 ### PR Title Format
 
 Follow the same format as commit messages:
+
 ```
 feat(scope): add new feature
 fix(scope): resolve bug
@@ -348,6 +366,7 @@ fix(scope): resolve bug
 ## Questions?
 
 If you have questions:
+
 - Check the [documentation](docs/)
 - Open a discussion on GitHub
 - Ask in issue comments
@@ -359,6 +378,7 @@ All contributors will be recognized in our README.md. Thank you for your contrib
 ## License & CLA
 
 By contributing, you agree that:
+
 1. Your contributions will be subject to the project's [Proprietary LICENSE](LICENSE)
 2. You automatically accept and agree to the [Contributor License Agreement (CLA)](CLA.md)
 3. **ONLY the Owner (Rishabh Dubey)** retains exclusive commercial rights to the project
@@ -367,6 +387,7 @@ By contributing, you agree that:
 6. You cannot use the project commercially without written permission
 
 For full details, please read:
+
 - [LICENSE](LICENSE) - Proprietary license terms (no redistribution allowed)
 - [CLA](CLA.md) - Contributor License Agreement (includes DCO)
 
@@ -377,6 +398,7 @@ For full details, please read:
 ## Important Restrictions
 
 Please note that by contributing:
+
 - ❌ You may NOT redistribute this software
 - ❌ You may NOT use it commercially
 - ❌ You may NOT create derivative works for distribution

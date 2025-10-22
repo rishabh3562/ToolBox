@@ -21,7 +21,7 @@ export interface Field {
 export interface Index {
   name: string;
   fields: string[];
-  type?: 'UNIQUE' | 'FULLTEXT' | 'SPATIAL';
+  type?: "UNIQUE" | "FULLTEXT" | "SPATIAL";
 }
 
 export interface ForeignKey {
@@ -31,8 +31,8 @@ export interface ForeignKey {
     table: string;
     fields: string[];
   };
-  onDelete?: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION';
-  onUpdate?: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION';
+  onDelete?: "CASCADE" | "SET NULL" | "RESTRICT" | "NO ACTION";
+  onUpdate?: "CASCADE" | "SET NULL" | "RESTRICT" | "NO ACTION";
 }
 
 export interface Schema {
@@ -42,7 +42,7 @@ export interface Schema {
   tables: Table[];
 }
 
-export type DatabaseType = 'mysql' | 'postgresql' | 'mongodb';
+export type DatabaseType = "mysql" | "postgresql" | "mongodb";
 
 export interface SchemaGeneratorResponse {
   schema: Schema;
