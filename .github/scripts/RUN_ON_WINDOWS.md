@@ -7,11 +7,13 @@ If you installed Git for Windows, you already have Git Bash:
 1. **Open Git Bash** (right-click in Windows Explorer → "Git Bash Here")
 
 2. **Navigate to your repository**:
+
    ```bash
    cd /d/rishabh/Github/ToolBox
    ```
 
 3. **Install jq** (if not already installed):
+
    ```bash
    # Download jq for Windows
    curl -L -o jq.exe https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-win64.exe
@@ -24,6 +26,7 @@ If you installed Git for Windows, you already have Git Bash:
    ```
 
 4. **Set environment variables**:
+
    ```bash
    # If you have GitHub CLI installed
    export GITHUB_TOKEN=$(gh auth token)
@@ -44,16 +47,19 @@ If you installed Git for Windows, you already have Git Bash:
 If you have WSL (Windows Subsystem for Linux):
 
 1. **Open PowerShell** and start WSL:
+
    ```powershell
    wsl
    ```
 
 2. **Navigate to repository** (Windows drives are at /mnt/):
+
    ```bash
    cd /mnt/d/rishabh/Github/ToolBox
    ```
 
 3. **Install jq** (if needed):
+
    ```bash
    sudo apt-get update
    sudo apt-get install jq
@@ -71,11 +77,12 @@ If you have WSL (Windows Subsystem for Linux):
 Create a manual workflow to run the script:
 
 1. **Create** `.github/workflows/update-labels.yml`:
+
    ```yaml
    name: Update Issue Labels
 
    on:
-     workflow_dispatch:  # Manual trigger only
+     workflow_dispatch: # Manual trigger only
 
    jobs:
      update-labels:
@@ -124,20 +131,25 @@ If not installed, follow Option 1 Step 3 above.
 ## Troubleshooting
 
 ### "bash: jq: command not found"
+
 - Follow the jq installation steps in Option 1 or 2
 
 ### "Permission denied"
+
 ```bash
 chmod +x .github/scripts/update-issue-labels.sh
 ```
 
 ### "curl: command not found" in Git Bash
+
 - Git Bash should have curl. Try reinstalling Git for Windows
 
 ### Script can't find issues
+
 - Make sure issues were already created by the Hacktoberfest workflow
 - Check that `.github/hacktoberfest-issues/ALL.md` exists
 
 ### Rate limit errors
+
 - Wait 1 hour and try again
 - Or use a fresh GitHub token

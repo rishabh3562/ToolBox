@@ -1,22 +1,30 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Profile, PlatformType } from '@/types/profile';
-import { platforms } from '@/lib/profiles/platforms';
-import { ProfileService } from '@/lib/db/services/profileService';
-import { ProfileCard } from '@/components/profiles/profile-card';
-import { ProfileForm } from '@/components/profiles/profile-form';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search } from 'lucide-react';
-import * as Icons from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Profile, PlatformType } from "@/types/profile";
+import { platforms } from "@/lib/profiles/platforms";
+import { ProfileService } from "@/lib/db/services/profileService";
+import { ProfileCard } from "@/components/profiles/profile-card";
+import { ProfileForm } from "@/components/profiles/profile-form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Plus, Search } from "lucide-react";
+import * as Icons from "lucide-react";
 
 export default function ProfileTrackerPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedPlatform, setSelectedPlatform] = useState<PlatformType | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedPlatform, setSelectedPlatform] = useState<
+    PlatformType | "all"
+  >("all");
   const [isAddingProfile, setIsAddingProfile] = useState(false);
   const [editingProfile, setEditingProfile] = useState<Profile>();
   const [loading, setLoading] = useState(true);
@@ -31,23 +39,24 @@ export default function ProfileTrackerPage() {
       const profilesData = await ProfileService.getAllProfiles();
       setProfiles(profilesData);
     } catch (error) {
-      console.error('Error loading profiles:', error);
+      console.error("Error loading profiles:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredProfiles = profiles.filter(profile => {
-    const matchesSearch = 
+  const filteredProfiles = profiles.filter((profile) => {
+    const matchesSearch =
       profile.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       profile.handle.toLowerCase().includes(searchQuery.toLowerCase()) ||
       profile.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      profile.categories.some(cat => 
-        cat.toLowerCase().includes(searchQuery.toLowerCase())
+      profile.categories.some((cat) =>
+        cat.toLowerCase().includes(searchQuery.toLowerCase()),
       );
-    
-    const matchesPlatform = selectedPlatform === 'all' || profile.platform === selectedPlatform;
-    
+
+    const matchesPlatform =
+      selectedPlatform === "all" || profile.platform === selectedPlatform;
+
     return matchesSearch && matchesPlatform;
   });
 
@@ -63,13 +72,13 @@ export default function ProfileTrackerPage() {
         favoriteContent: [],
         url: profileData.url!,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       setProfiles([newProfile, ...profiles]);
       setIsAddingProfile(false);
     } catch (error) {
-      console.error('Error adding profile:', error);
+      console.error("Error adding profile:", error);
     }
   };
 
@@ -77,29 +86,34 @@ export default function ProfileTrackerPage() {
     if (!editingProfile) return;
 
     try {
-      const updatedProfile = await ProfileService.updateProfile(editingProfile.id, profileData);
-      
+      const updatedProfile = await ProfileService.updateProfile(
+        editingProfile.id,
+        profileData,
+      );
+
       if (updatedProfile) {
-        setProfiles(profiles.map(p => 
-          p.id === editingProfile.id ? updatedProfile : p
-        ));
+        setProfiles(
+          profiles.map((p) =>
+            p.id === editingProfile.id ? updatedProfile : p,
+          ),
+        );
       }
-      
+
       setEditingProfile(undefined);
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
     }
   };
 
   const handleDeleteProfile = async (profile: Profile) => {
     try {
       const success = await ProfileService.deleteProfile(profile.id);
-      
+
       if (success) {
-        setProfiles(profiles.filter(p => p.id !== profile.id));
+        setProfiles(profiles.filter((p) => p.id !== profile.id));
       }
     } catch (error) {
-      console.error('Error deleting profile:', error);
+      console.error("Error deleting profile:", error);
     }
   };
 
@@ -155,16 +169,20 @@ export default function ProfileTrackerPage() {
 
         <Tabs defaultValue="all" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="all" onClick={() => setSelectedPlatform('all')}>
+            <TabsTrigger value="all" onClick={() => setSelectedPlatform("all")}>
               All Platforms
             </TabsTrigger>
             {platforms.map((platform) => {
-              const Icon = Icons[platform.icon as keyof typeof Icons] as React.ComponentType<{ className?: string }>;
+              const Icon = Icons[
+                platform.icon as keyof typeof Icons
+              ] as React.ComponentType<{ className?: string }>;
               return (
                 <TabsTrigger
                   key={platform.id}
                   value={platform.id}
-                  onClick={() => setSelectedPlatform(platform.id as PlatformType)}
+                  onClick={() =>
+                    setSelectedPlatform(platform.id as PlatformType)
+                  }
                   className="flex items-center gap-2"
                 >
                   {Icon && <Icon className={`w-4 h-4 ${platform.color}`} />}
@@ -194,7 +212,10 @@ export default function ProfileTrackerPage() {
         </Tabs>
 
         {editingProfile && (
-          <Dialog open={!!editingProfile} onOpenChange={() => setEditingProfile(undefined)}>
+          <Dialog
+            open={!!editingProfile}
+            onOpenChange={() => setEditingProfile(undefined)}
+          >
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Edit Profile</DialogTitle>

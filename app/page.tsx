@@ -1,35 +1,47 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Zap, Clock, Lock, Code, Sparkles, Users } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  Zap,
+  Clock,
+  Lock,
+  Code,
+  Sparkles,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 const features = [
   {
-    name: 'Lightning Fast',
-    description: 'All tools are optimized for speed and efficiency, running directly in your browser.',
+    name: "Lightning Fast",
+    description:
+      "All tools are optimized for speed and efficiency, running directly in your browser.",
     icon: Zap,
   },
   {
-    name: 'Time Saving',
-    description: 'Automate repetitive tasks and streamline your development workflow.',
+    name: "Time Saving",
+    description:
+      "Automate repetitive tasks and streamline your development workflow.",
     icon: Clock,
   },
   {
-    name: 'Secure',
-    description: 'Your data stays in your browser. No server-side processing or storage.',
+    name: "Secure",
+    description:
+      "Your data stays in your browser. No server-side processing or storage.",
     icon: Lock,
   },
 ];
 
 const tools = [
   {
-    name: 'Template Manager',
-    description: 'Create and manage professional templates with ease.',
+    name: "Template Manager",
+    description: "Create and manage professional templates with ease.",
     icon: Code,
   },
   {
-    name: 'Markdown Editor',
-    description: 'Rich markdown editing with live preview and syntax highlighting.',
+    name: "Markdown Editor",
+    description:
+      "Rich markdown editing with live preview and syntax highlighting.",
     icon: Sparkles,
   },
 ];
@@ -48,12 +60,13 @@ export default function Home() {
               </span>
             </div>
             <h1 className="text-6xl font-bold tracking-tight sm:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-300 dark:to-white">
-              Professional Tools for{' '}
+              Professional Tools for{" "}
               <span className="text-primary">Modern Developers</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              A collection of powerful tools designed to streamline your development workflow
-              and boost productivity. Built by developers, for developers.
+              A collection of powerful tools designed to streamline your
+              development workflow and boost productivity. Built by developers,
+              for developers.
             </p>
             <div className="flex justify-center gap-4">
               <Link href="/tools">
@@ -133,7 +146,8 @@ export default function Home() {
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
           <p className="text-muted-foreground text-lg mb-8">
-            Join thousands of developers who use our tools to boost their productivity.
+            Join thousands of developers who use our tools to boost their
+            productivity.
           </p>
           <Link href="/tools">
             <Button size="lg" className="h-12 px-8">

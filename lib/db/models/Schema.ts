@@ -62,7 +62,7 @@ const SchemaModelSchema = new MongooseSchema<ISchema>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Final model (safe for hot reload)

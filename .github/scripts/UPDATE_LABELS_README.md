@@ -63,21 +63,22 @@ bash .github/scripts/update-issue-labels.sh
 
 The script uses keyword matching to categorize issues:
 
-| Keywords | Label |
-|----------|-------|
-| test, testing | `testing` |
-| performance, optimization | `performance` |
-| accessibility, a11y | `accessibility` |
-| security, auth | `security` |
-| documentation, docs, guide | `documentation` |
-| api, sdk | `api` |
-| mobile, ios, android | `mobile` |
-| database, storage, migration | `database` |
-| plugin, marketplace | `enhancement` |
-| ci/cd, devops | `devops` |
-| ai, machine learning | `ai` |
+| Keywords                     | Label           |
+| ---------------------------- | --------------- |
+| test, testing                | `testing`       |
+| performance, optimization    | `performance`   |
+| accessibility, a11y          | `accessibility` |
+| security, auth               | `security`      |
+| documentation, docs, guide   | `documentation` |
+| api, sdk                     | `api`           |
+| mobile, ios, android         | `mobile`        |
+| database, storage, migration | `database`      |
+| plugin, marketplace          | `enhancement`   |
+| ci/cd, devops                | `devops`        |
+| ai, machine learning         | `ai`            |
 
 Plus special labels:
+
 - `good first issue` - if text contains "good first issue"
 - `help wanted` - if text contains "help wanted"
 - `hacktoberfest` - added to all issues
@@ -117,6 +118,7 @@ Plus special labels:
 ### "jq: command not found"
 
 Install jq:
+
 - **macOS**: `brew install jq`
 - **Ubuntu/Debian**: `sudo apt-get install jq`
 - **Windows (Git Bash)**: Download from https://jqlang.github.io/jq/
