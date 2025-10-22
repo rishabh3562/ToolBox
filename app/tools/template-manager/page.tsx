@@ -65,6 +65,7 @@ export default function TemplateManagerPage() {
         name: 'Untitled',
         category: 'blog',
         content: 'New content...',
+        tags: [],
       });
       setTemplates([newTemplate, ...templates]);
       setSelectedTemplate(newTemplate);
