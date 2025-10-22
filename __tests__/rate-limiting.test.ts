@@ -3,7 +3,10 @@
  */
 
 import { NextRequest } from "next/server";
-import { withRateLimit, checkRateLimit } from "../lib/middleware/rate-limit-middleware";
+import {
+  withRateLimit,
+  checkRateLimit,
+} from "../lib/middleware/rate-limit-middleware";
 import { RATE_LIMIT_CONFIG } from "../lib/rate-limit";
 
 // Mock the rate limiter for testing
@@ -41,10 +44,19 @@ describe("Rate Limiting", () => {
 
   describe("Rate Limit Configuration", () => {
     it("should have correct rate limit configurations", () => {
-      expect(RATE_LIMIT_CONFIG.default).toEqual({ requests: 100, window: "1h" });
+      expect(RATE_LIMIT_CONFIG.default).toEqual({
+        requests: 100,
+        window: "1h",
+      });
       expect(RATE_LIMIT_CONFIG.api).toEqual({ requests: 60, window: "1m" });
-      expect(RATE_LIMIT_CONFIG.templates).toEqual({ requests: 30, window: "1m" });
-      expect(RATE_LIMIT_CONFIG.snippets).toEqual({ requests: 50, window: "1m" });
+      expect(RATE_LIMIT_CONFIG.templates).toEqual({
+        requests: 30,
+        window: "1m",
+      });
+      expect(RATE_LIMIT_CONFIG.snippets).toEqual({
+        requests: 50,
+        window: "1m",
+      });
       expect(RATE_LIMIT_CONFIG.ai).toEqual({ requests: 10, window: "1m" });
       expect(RATE_LIMIT_CONFIG.auth).toEqual({ requests: 5, window: "1m" });
       expect(RATE_LIMIT_CONFIG.upload).toEqual({ requests: 20, window: "1m" });
@@ -76,7 +88,9 @@ describe("Rate Limiting", () => {
 
       const response = await withRateLimit(mockRequest, mockHandler, "default");
 
-      expect(rateLimiters.default.limit).toHaveBeenCalledWith("192.168.1.1:default");
+      expect(rateLimiters.default.limit).toHaveBeenCalledWith(
+        "192.168.1.1:default",
+      );
       expect(mockHandler).toHaveBeenCalledWith(mockRequest);
       expect(response.status).toBe(200);
     });
@@ -92,7 +106,9 @@ describe("Rate Limiting", () => {
 
       const response = await withRateLimit(mockRequest, mockHandler, "default");
 
-      expect(rateLimiters.default.limit).toHaveBeenCalledWith("192.168.1.1:default");
+      expect(rateLimiters.default.limit).toHaveBeenCalledWith(
+        "192.168.1.1:default",
+      );
       expect(mockHandler).not.toHaveBeenCalled();
       expect(response.status).toBe(429);
 
@@ -120,7 +136,7 @@ describe("Rate Limiting", () => {
 
     it("should handle different rate limit types", async () => {
       const { rateLimiters } = require("../lib/rate-limit");
-      
+
       // Test AI rate limiting (strictest)
       rateLimiters.ai.limit.mockResolvedValue({
         success: true,
@@ -139,7 +155,9 @@ describe("Rate Limiting", () => {
 
     it("should handle rate limiting errors gracefully", async () => {
       const { rateLimiters } = require("../lib/rate-limit");
-      rateLimiters.default.limit.mockRejectedValue(new Error("Redis connection failed"));
+      rateLimiters.default.limit.mockRejectedValue(
+        new Error("Redis connection failed"),
+      );
 
       mockHandler.mockResolvedValue(new Response("OK"));
 

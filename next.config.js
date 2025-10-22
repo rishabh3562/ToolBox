@@ -9,7 +9,7 @@ const nextConfig = {
   },
   images: { unoptimized: true },
   // Exclude docs folder from Next.js compilation
-  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  pageExtensions: ["tsx", "ts", "jsx", "js"],
   experimental: {
     externalDir: true,
   },

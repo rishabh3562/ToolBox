@@ -3,15 +3,18 @@ import { rateLimitMiddleware } from "@/lib/middleware/rate-limit-middleware";
 
 // Helper function to sanitize user input
 const sanitizeInput = (input: string): string => {
-  return input.replace(/[<>'"]/g, (char) => {
-    const entities: { [key: string]: string } = {
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    };
-    return entities[char] || char;
-  }).trim().slice(0, 500); // Limit length
+  return input
+    .replace(/[<>'"]/g, (char) => {
+      const entities: { [key: string]: string } = {
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;",
+      };
+      return entities[char] || char;
+    })
+    .trim()
+    .slice(0, 500); // Limit length
 };
 
 // POST /api/ai/generate - AI-powered code generation
@@ -24,7 +27,7 @@ async function handleAIGenerate(request: NextRequest): Promise<NextResponse> {
     if (!prompt || !type) {
       return NextResponse.json(
         { error: "Prompt and type are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,17 +36,17 @@ async function handleAIGenerate(request: NextRequest): Promise<NextResponse> {
     if (!supportedTypes.includes(type)) {
       return NextResponse.json(
         { error: `Unsupported type. Supported: ${supportedTypes.join(", ")}` },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Sanitize inputs
     const sanitizedPrompt = sanitizeInput(prompt);
     const sanitizedLanguage = language ? sanitizeInput(language) : "javascript";
-    
+
     // Simulate AI generation (replace with actual AI service)
     let generatedContent = "";
-    
+
     switch (type) {
       case "code":
         generatedContent = `// Generated ${sanitizedLanguage} code based on: ${sanitizedPrompt}\nfunction generatedFunction() {\n  // TODO: Implement based on prompt\n  console.log("Generated from prompt");\n}`;
@@ -78,7 +81,7 @@ async function handleAIGenerate(request: NextRequest): Promise<NextResponse> {
     console.error("Error generating AI content:", error);
     return NextResponse.json(
       { error: "Failed to generate content" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
