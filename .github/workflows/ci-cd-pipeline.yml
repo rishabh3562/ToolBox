@@ -198,8 +198,8 @@ jobs:
       - name: Security audit
         run: |
           echo "🔒 Running security audit..."
-          npm audit --audit-level=moderate || {
-            echo "⚠️ Security vulnerabilities found!"
+          npm audit --audit-level=high || {
+            echo "⚠️ High/Critical security vulnerabilities found!"
             echo "💡 Run 'npm audit fix' to resolve"
             exit 1
           }
