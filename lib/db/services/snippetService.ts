@@ -1,5 +1,5 @@
-import connectDB from '../connection';
-import Snippet, { SnippetDocument } from '../models/Snippet';
+import { connectDB } from '../connection';
+import Snippet from '../models/Snippet';
 import { Snippet as ISnippet } from '@/types/snippet';
 
 export class SnippetService {
@@ -9,9 +9,10 @@ export class SnippetService {
     const snippet = new Snippet(snippetData);
     const savedSnippet = await snippet.save();
     
+    const { _id, ...rest } = savedSnippet.toObject();
     return {
-      id: savedSnippet._id.toString(),
-      ...savedSnippet.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -20,10 +21,13 @@ export class SnippetService {
     
     const snippets = await Snippet.find({}).sort({ createdAt: -1 });
     
-    return snippets.map(snippet => ({
-      id: snippet._id.toString(),
-      ...snippet.toObject()
-    }));
+    return snippets.map(snippet => {
+      const { _id, ...rest } = snippet.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 
   static async getSnippetById(id: string): Promise<ISnippet | null> {
@@ -33,9 +37,10 @@ export class SnippetService {
     
     if (!snippet) return null;
     
+    const { _id, ...rest } = snippet.toObject();
     return {
-      id: snippet._id.toString(),
-      ...snippet.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -50,9 +55,10 @@ export class SnippetService {
     
     if (!snippet) return null;
     
+    const { _id, ...rest } = snippet.toObject();
     return {
-      id: snippet._id.toString(),
-      ...snippet.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -81,10 +87,13 @@ export class SnippetService {
 
     const snippets = await Snippet.find(searchFilter).sort({ createdAt: -1 });
     
-    return snippets.map(snippet => ({
-      id: snippet._id.toString(),
-      ...snippet.toObject()
-    }));
+    return snippets.map(snippet => {
+      const { _id, ...rest } = snippet.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 
   static async getSnippetsByCategory(category: string): Promise<ISnippet[]> {
@@ -92,10 +101,13 @@ export class SnippetService {
     
     const snippets = await Snippet.find({ category }).sort({ createdAt: -1 });
     
-    return snippets.map(snippet => ({
-      id: snippet._id.toString(),
-      ...snippet.toObject()
-    }));
+    return snippets.map(snippet => {
+      const { _id, ...rest } = snippet.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 
   static async getSnippetsByLanguage(language: string): Promise<ISnippet[]> {
@@ -103,9 +115,12 @@ export class SnippetService {
     
     const snippets = await Snippet.find({ language }).sort({ createdAt: -1 });
     
-    return snippets.map(snippet => ({
-      id: snippet._id.toString(),
-      ...snippet.toObject()
-    }));
+    return snippets.map(snippet => {
+      const { _id, ...rest } = snippet.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 }

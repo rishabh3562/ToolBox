@@ -28,6 +28,7 @@ ToolBox is revolutionizing how developers create and share productivity tools. W
 - **🌙 Dark Mode** - Full dark mode support for comfortable extended use
 - **📦 MongoDB Integration** - Robust data storage with user isolation
 - **🛡️ Type Safe** - Built with TypeScript for reliability and superior developer experience
+- **🚨 Rate Limiting** - API protection with intelligent rate limiting and IP-based tracking
 
 ### 🚀 Roadmap (Community Contributions Welcome!)
 - **🔌 Plugin Marketplace** - Discover and install community-created tools

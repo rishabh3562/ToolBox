@@ -1,5 +1,5 @@
-import connectDB from '../connection';
-import Template, { TemplateDocument } from '../models/Template';
+import { connectDB } from '../connection';
+import Template from '../models/Template';
 import { Template as ITemplate } from '@/types';
 
 export class TemplateService {
@@ -9,9 +9,10 @@ export class TemplateService {
     const template = new Template(templateData);
     const savedTemplate = await template.save();
     
+    const { _id, ...rest } = savedTemplate.toObject();
     return {
-      id: savedTemplate._id.toString(),
-      ...savedTemplate.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -20,10 +21,54 @@ export class TemplateService {
     
     const templates = await Template.find({}).sort({ createdAt: -1 });
     
-    return templates.map(template => ({
-      id: template._id.toString(),
-      ...template.toObject()
-    }));
+    return templates.map(template => {
+      const { _id, ...rest } = template.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
+  }
+
+  static async getFilteredTemplates(filters: {
+    searchQuery?: string;
+    categories?: string[];
+    tags?: string[];
+  }): Promise<ITemplate[]> {
+    await connectDB();
+
+    // Build MongoDB query with proper typing
+    const query: Record<string, unknown> = {};
+
+    // Fuzzy search: search in name, category, and content fields
+    if (filters.searchQuery) {
+      const searchRegex = { $regex: filters.searchQuery, $options: 'i' };
+      query.$or = [
+        { name: searchRegex },
+        { content: searchRegex },
+        { category: searchRegex }
+      ];
+    }
+
+    // Category filtering
+    if (filters.categories && filters.categories.length > 0) {
+      query.category = { $in: filters.categories };
+    }
+
+    // Tag filtering - match any of the provided tags for better UX
+    if (filters.tags && filters.tags.length > 0) {
+      query.tags = { $in: filters.tags };
+    }
+
+    const templates = await Template.find(query).sort({ createdAt: -1 });
+
+    return templates.map(template => {
+      const { _id, ...rest } = template.toObject();
+      return {
+        ...rest,
+        id: _id.toString()
+      };
+    });
   }
 
   static async getTemplateById(id: string): Promise<ITemplate | null> {
@@ -33,9 +78,10 @@ export class TemplateService {
     
     if (!template) return null;
     
+    const { _id, ...rest } = template.toObject();
     return {
-      id: template._id.toString(),
-      ...template.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
@@ -50,28 +96,18 @@ export class TemplateService {
     
     if (!template) return null;
     
+    const { _id, ...rest } = template.toObject();
     return {
-      id: template._id.toString(),
-      ...template.toObject()
+      ...rest,
+      id: _id.toString()
     };
   }
 
   static async deleteTemplate(id: string): Promise<boolean> {
     await connectDB();
-    
+
     const result = await Template.findByIdAndDelete(id);
     return !!result;
-  }
-
-  static async getTemplatesByCategory(category: string): Promise<ITemplate[]> {
-    await connectDB();
-    
-    const templates = await Template.find({ category }).sort({ createdAt: -1 });
-    
-    return templates.map(template => ({
-      id: template._id.toString(),
-      ...template.toObject()
-    }));
   }
 
   static async initializeDefaultTemplates(): Promise<void> {
@@ -101,7 +137,7 @@ Best regards,
 {{your_name}}`,
       },
       {
-        name: "Tompate Reply",
+        name: "Topmate Reply",
         category: "email" as const,
         content: `Subject: Thank You for Your Interest – How Can I Help You?
 
