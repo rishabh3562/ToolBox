@@ -18,7 +18,7 @@ async function handleHealthCheck(request: NextRequest): Promise<NextResponse> {
       rateLimit: {
         enabled: true,
         provider: process.env.UPSTASH_REDIS_REST_URL ? "redis" : "memory",
-      }
+      },
     };
 
     return NextResponse.json({
@@ -28,13 +28,13 @@ async function handleHealthCheck(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error("Health check error:", error);
     return NextResponse.json(
-      { 
+      {
         success: false,
         status: "unhealthy",
         error: "Health check failed",
         timestamp: new Date().toISOString(),
       },
-      { status: 503 }
+      { status: 503 },
     );
   }
 }

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Category } from '@/types/snippet';
-import { Button } from '@/components/ui/button';
-import { ChevronRight, FolderOpen, Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Category } from "@/types/snippet";
+import { Button } from "@/components/ui/button";
+import { ChevronRight, FolderOpen, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface CategoryTreeProps {
   categories: Category[];
@@ -18,18 +18,19 @@ export function CategoryTree({
   selectedCategory,
   onSelect,
   onAdd,
-  className
+  className,
 }: CategoryTreeProps) {
   const renderCategory = (category: Category, depth = 0) => {
-    const hasSubCategories = category.subCategories && category.subCategories.length > 0;
-    
+    const hasSubCategories =
+      category.subCategories && category.subCategories.length > 0;
+
     return (
       <div key={category.id} className="space-y-1">
         <div
           className={cn(
-            'flex items-center gap-2 p-2 rounded-md hover:bg-accent cursor-pointer',
-            selectedCategory === category.id && 'bg-accent',
-            depth > 0 && 'ml-4'
+            "flex items-center gap-2 p-2 rounded-md hover:bg-accent cursor-pointer",
+            selectedCategory === category.id && "bg-accent",
+            depth > 0 && "ml-4",
           )}
           onClick={() => onSelect(category.id)}
         >
@@ -53,7 +54,7 @@ export function CategoryTree({
         {hasSubCategories && (
           <div className="pl-4">
             {category.subCategories?.map((subCategory) =>
-              renderCategory(subCategory, depth + 1)
+              renderCategory(subCategory, depth + 1),
             )}
           </div>
         )}
@@ -62,14 +63,10 @@ export function CategoryTree({
   };
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn("space-y-2", className)}>
       {categories.map((category) => renderCategory(category))}
       {onAdd && (
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => onAdd()}
-        >
+        <Button variant="outline" className="w-full" onClick={() => onAdd()}>
           <Plus className="w-4 h-4 mr-2" />
           Add Category
         </Button>

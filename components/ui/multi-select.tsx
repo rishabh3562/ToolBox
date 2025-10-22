@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { CheckIcon, XCircle, ChevronDown, XIcon } from 'lucide-react';
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { CheckIcon, XCircle, ChevronDown, XIcon } from "lucide-react";
 
-import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
+} from "@/components/ui/popover";
 import {
   Command,
   CommandEmpty,
@@ -21,26 +21,26 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/ui/command';
+} from "@/components/ui/command";
 
 const multiSelectVariants = cva(
-  'm-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300',
+  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
   {
     variants: {
       variant: {
         default:
-          'border-foreground/10 text-foreground bg-card hover:bg-card/80',
+          "border-foreground/10 text-foreground bg-card hover:bg-card/80",
         secondary:
-          'border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80',
+          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
-          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
-        inverted: 'inverted',
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+        inverted: "inverted",
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: "default",
     },
-  }
+  },
 );
 
 interface MultiSelectProps
@@ -70,14 +70,14 @@ export const MultiSelect = React.forwardRef<
       onValueChange,
       variant,
       defaultValue = [],
-      placeholder = 'Select options',
+      placeholder = "Select options",
       animation = 0,
       maxCount = 3,
       asChild = false,
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
@@ -88,11 +88,11 @@ export const MultiSelect = React.forwardRef<
     }, [defaultValue]);
 
     const handleInputKeyDown = (
-      event: React.KeyboardEvent<HTMLInputElement>
+      event: React.KeyboardEvent<HTMLInputElement>,
     ) => {
-      if (event.key === 'Enter') {
+      if (event.key === "Enter") {
         setIsPopoverOpen(true);
-      } else if (event.key === 'Backspace' && !event.currentTarget.value) {
+      } else if (event.key === "Backspace" && !event.currentTarget.value) {
         const newSelectedValues = [...selectedValues];
         newSelectedValues.pop();
         setSelectedValues(newSelectedValues);
@@ -144,8 +144,8 @@ export const MultiSelect = React.forwardRef<
                   {selectedValues.length > maxCount && (
                     <Badge
                       className={cn(
-                        'bg-transparent text-foreground border-foreground/10',
-                        multiSelectVariants({ variant })
+                        "bg-transparent text-foreground border-foreground/10",
+                        multiSelectVariants({ variant }),
                       )}
                       style={{
                         animationDelay: `${animation}s`,
@@ -199,17 +199,17 @@ export const MultiSelect = React.forwardRef<
                     key={option.value}
                     onSelect={() => toggleOption(option.value)}
                     style={{
-                      pointerEvents: 'auto',
+                      pointerEvents: "auto",
                       opacity: 1,
                     }}
                     className="cursor-pointer"
                   >
                     <div
                       className={cn(
-                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                         selectedValues.includes(option.value)
-                          ? 'bg-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible'
+                          ? "bg-primary text-primary-foreground"
+                          : "opacity-50 [&_svg]:invisible",
                       )}
                     >
                       <CheckIcon className="h-4 w-4" />
@@ -231,7 +231,7 @@ export const MultiSelect = React.forwardRef<
                         onValueChange([]);
                       }}
                       style={{
-                        pointerEvents: 'auto',
+                        pointerEvents: "auto",
                         opacity: 1,
                       }}
                       className="justify-center text-center"
@@ -246,7 +246,7 @@ export const MultiSelect = React.forwardRef<
         </PopoverContent>
       </Popover>
     );
-  }
+  },
 );
 
-MultiSelect.displayName = 'MultiSelect';
+MultiSelect.displayName = "MultiSelect";

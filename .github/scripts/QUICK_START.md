@@ -33,28 +33,28 @@ bash .github/scripts/update-issue-labels.sh
 
 Your issues will have these labels after running:
 
-| Issue Title | Labels |
-|------------|--------|
-| Implement User Authentication System | `hacktoberfest`, `help wanted`, `security` |
-| Migrate to User-Scoped Data Storage | `hacktoberfest`, `help wanted`, `database` |
-| Build Community Tool Marketplace | `hacktoberfest`, `help wanted`, `enhancement` |
-| Implement Tool Plugin Architecture | `hacktoberfest`, `help wanted`, `enhancement` |
-| Add Real-time Collaboration Features | `hacktoberfest`, `help wanted`, `enhancement` |
-| Implement Advanced Search & Discovery | `hacktoberfest`, `help wanted`, `enhancement` |
-| Build Developer API & SDK | `hacktoberfest`, `help wanted`, `api` |
-| Implement Analytics & Insights Dashboard | `hacktoberfest`, `help wanted`, `enhancement` |
-| Add Progressive Web App (PWA) Support | `hacktoberfest`, `good first issue`, `help wanted`, `enhancement` |
-| Implement Import/Export & Backup System | `hacktoberfest`, `help wanted`, `enhancement` |
-| Build Comprehensive Testing Suite | `hacktoberfest`, `help wanted`, `testing` |
-| Implement Performance Optimization | `hacktoberfest`, `help wanted`, `performance` |
-| Add Accessibility Improvements | `hacktoberfest`, `good first issue`, `help wanted`, `accessibility` |
-| Implement Notification System | `hacktoberfest`, `help wanted`, `enhancement` |
-| Create Mobile App | `hacktoberfest`, `help wanted`, `mobile` |
-| Implement AI-Powered Features | `hacktoberfest`, `help wanted`, `ai` |
-| Build Admin Dashboard & Moderation Tools | `hacktoberfest`, `help wanted`, `enhancement` |
-| Implement Social Features & Community | `hacktoberfest`, `help wanted`, `enhancement` |
-| Implement CI/CD Pipeline | `hacktoberfest`, `help wanted`, `devops` |
-| Create Comprehensive Documentation Site | `hacktoberfest`, `good first issue`, `help wanted`, `documentation` |
+| Issue Title                              | Labels                                                              |
+| ---------------------------------------- | ------------------------------------------------------------------- |
+| Implement User Authentication System     | `hacktoberfest`, `help wanted`, `security`                          |
+| Migrate to User-Scoped Data Storage      | `hacktoberfest`, `help wanted`, `database`                          |
+| Build Community Tool Marketplace         | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Implement Tool Plugin Architecture       | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Add Real-time Collaboration Features     | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Implement Advanced Search & Discovery    | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Build Developer API & SDK                | `hacktoberfest`, `help wanted`, `api`                               |
+| Implement Analytics & Insights Dashboard | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Add Progressive Web App (PWA) Support    | `hacktoberfest`, `good first issue`, `help wanted`, `enhancement`   |
+| Implement Import/Export & Backup System  | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Build Comprehensive Testing Suite        | `hacktoberfest`, `help wanted`, `testing`                           |
+| Implement Performance Optimization       | `hacktoberfest`, `help wanted`, `performance`                       |
+| Add Accessibility Improvements           | `hacktoberfest`, `good first issue`, `help wanted`, `accessibility` |
+| Implement Notification System            | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Create Mobile App                        | `hacktoberfest`, `help wanted`, `mobile`                            |
+| Implement AI-Powered Features            | `hacktoberfest`, `help wanted`, `ai`                                |
+| Build Admin Dashboard & Moderation Tools | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Implement Social Features & Community    | `hacktoberfest`, `help wanted`, `enhancement`                       |
+| Implement CI/CD Pipeline                 | `hacktoberfest`, `help wanted`, `devops`                            |
+| Create Comprehensive Documentation Site  | `hacktoberfest`, `good first issue`, `help wanted`, `documentation` |
 
 ## ⏱️ How Long Will It Take?
 
@@ -65,6 +65,7 @@ Your issues will have these labels after running:
 ## 🔒 Security Note
 
 The script only needs `repo` scope on your GitHub token. It will:
+
 - ✅ Read existing issues
 - ✅ Update labels
 - ❌ Won't modify issue titles or descriptions
