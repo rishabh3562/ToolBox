@@ -22,6 +22,13 @@ on:
         type: boolean
         default: false
 
+# Grant permissions to write comments and deployments
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  deployments: write
+
 env:
   NODE_VERSION: '18.x'
   CACHE_NAME: 'node-modules-v1'
