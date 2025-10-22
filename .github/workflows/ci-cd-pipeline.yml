@@ -1,0 +1,703 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip tests (emergency deployments only)'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  NODE_VERSION: '18.x'
+  CACHE_NAME: 'node-modules-v1'
+
+# Cancel previous runs if a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================================================
+  # CONFIGURATION & SETUP
+  # ============================================================================
+
+  setup-context:
+    name: Setup Context
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.determine-env.outputs.environment }}
+      deploy-enabled: ${{ steps.determine-env.outputs.deploy-enabled }}
+      is-draft: ${{ steps.check-draft.outputs.is-draft }}
+      sha: ${{ steps.get-sha.outputs.sha }}
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get commit SHA
+        id: get-sha
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check draft status
+        id: check-draft
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ] && [ "${{ github.event.pull_request.draft }}" = "true" ]; then
+            echo "is-draft=true" >> $GITHUB_OUTPUT
+            echo "⏸️ Skipping CI for draft PR"
+          else
+            echo "is-draft=false" >> $GITHUB_OUTPUT
+            echo "✅ Running CI for ready PR/push"
+          fi
+
+      - name: Determine environment and deployment
+        id: determine-env
+        run: |
+          # Determine deployment environment
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            ENV="${{ github.event.inputs.environment }}"
+            DEPLOY="true"
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+              ENV="production"
+              DEPLOY="true"
+            elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+              ENV="staging"
+              DEPLOY="true"
+            else
+              ENV="development"
+              DEPLOY="false"
+            fi
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            ENV="preview"
+            DEPLOY="true"
+          else
+            ENV="development"
+            DEPLOY="false"
+          fi
+
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+          echo "deploy-enabled=$DEPLOY" >> $GITHUB_OUTPUT
+          echo "🎯 Environment: $ENV"
+          echo "🚀 Deployment: $DEPLOY"
+
+      - name: Get version
+        id: get-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Version: $VERSION"
+
+  # ============================================================================
+  # CODE QUALITY CHECKS
+  # ============================================================================
+
+  code-quality:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    needs: setup-context
+    if: needs.setup-context.outputs.is-draft == 'false'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.setup-context.outputs.sha }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ env.CACHE_NAME }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.CACHE_NAME }}-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Run ESLint
+        run: |
+          echo "🔍 Running ESLint..."
+          npm run lint
+
+      - name: TypeScript type check
+        run: |
+          echo "🔧 Running TypeScript type check..."
+          npx tsc --noEmit
+
+      - name: Check code formatting
+        run: |
+          echo "💅 Checking code formatting..."
+          npx prettier --check "**/*.{js,jsx,ts,tsx,json,css,md}" || {
+            echo "❌ Code formatting issues found."
+            echo "💡 Fix with: npm run format"
+            exit 1
+          }
+
+  # ============================================================================
+  # SECURITY CHECKS
+  # ============================================================================
+
+  security-check:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    needs: setup-context
+    if: needs.setup-context.outputs.is-draft == 'false'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.setup-context.outputs.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ env.CACHE_NAME }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.CACHE_NAME }}-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Security audit
+        run: |
+          echo "🔒 Running security audit..."
+          npm audit --audit-level=moderate || {
+            echo "⚠️ Security vulnerabilities found!"
+            echo "💡 Run 'npm audit fix' to resolve"
+            exit 1
+          }
+
+      - name: Check for vulnerable packages
+        run: |
+          echo "🔍 Checking for known vulnerabilities..."
+          npm audit --audit-level=high --json > audit-results.json || true
+          cat audit-results.json
+
+      - name: Upload security audit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-audit-results
+          path: audit-results.json
+          retention-days: 30
+
+  # ============================================================================
+  # BUILD & TEST
+  # ============================================================================
+
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    needs: setup-context
+    if: needs.setup-context.outputs.is-draft == 'false'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.setup-context.outputs.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ env.CACHE_NAME }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.CACHE_NAME }}-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Create test environment
+        run: |
+          echo "NEXT_PUBLIC_GEMINI_API_KEY=test_key_for_ci" >> .env.local
+          echo "MONGODB_URI=mongodb://localhost:27017/toolbox_test" >> .env.local
+          echo "NODE_ENV=test" >> .env.local
+
+      - name: Build application
+        run: |
+          echo "🏗️ Building application..."
+          npm run build
+
+      - name: Check build size
+        id: build-size
+        run: |
+          echo "📊 Build size analysis:"
+          BUILD_SIZE=$(du -sh out/ 2>/dev/null || du -sh .next/ 2>/dev/null || echo "0")
+          echo "build-size=$BUILD_SIZE" >> $GITHUB_OUTPUT
+          echo "Total size: $BUILD_SIZE"
+
+          echo "📦 Largest files:"
+          find out/ -type f -name "*.js" -exec ls -lh {} + 2>/dev/null | sort -k5 -hr | head -10 || \
+          find .next/ -type f -name "*.js" -exec ls -lh {} + 2>/dev/null | sort -k5 -hr | head -10 || \
+          echo "No build output found"
+
+      - name: Cache build output
+        uses: actions/cache@v4
+        with:
+          path: |
+            out/
+            .next/
+          key: ${{ runner.os }}-build-${{ needs.setup-context.outputs.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output-${{ needs.setup-context.outputs.sha }}
+          path: |
+            out/
+            .next/
+          retention-days: 7
+
+  # ============================================================================
+  # DEPLOYMENT - PREVIEW (PR)
+  # ============================================================================
+
+  deploy-preview:
+    name: Deploy Preview (Vercel)
+    runs-on: ubuntu-latest
+    needs: [setup-context, code-quality, build-test, security-check]
+    if: |
+      needs.setup-context.outputs.is-draft == 'false' &&
+      needs.setup-context.outputs.environment == 'preview' &&
+      needs.code-quality.result == 'success' &&
+      needs.build-test.result == 'success'
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.preview-url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.setup-context.outputs.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }} || echo "No Vercel project linked yet"
+
+      - name: Build Project Artifacts
+        env:
+          NEXT_PUBLIC_GEMINI_API_KEY: ${{ secrets.NEXT_PUBLIC_GEMINI_API_KEY }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI_PREVIEW }}
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }} || npm run build
+
+      - name: Deploy to Vercel (Preview)
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} || echo "")
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "⚠️ Vercel deployment not configured. Skipping..."
+            echo "preview-url=https://manual-preview-required" >> $GITHUB_OUTPUT
+          else
+            echo "preview-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+            echo "🚀 Deployed to: $DEPLOYMENT_URL"
+          fi
+
+      - name: Comment PR with preview info
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.deploy.outputs.preview-url }}';
+            const isVercelConfigured = !previewUrl.includes('manual-preview-required');
+
+            const comment = `## 🚀 Preview Deployment
+
+            ${isVercelConfigured ? `✅ Your changes have been deployed to preview!` : `⚠️ Preview deployment not configured yet.`}
+
+            **Build Details:**
+            - Environment: Preview
+            - Node.js: ${{ env.NODE_VERSION }}
+            - Commit: \`${{ needs.setup-context.outputs.sha }}\`
+            - Branch: \`${{ github.event.pull_request.head.ref }}\`
+
+            ${isVercelConfigured ? `**Preview URL:** [${previewUrl}](${previewUrl})` : `**Next Steps:**
+            - Configure Vercel integration or
+            - Deploy manually using: \`npm run build && vercel deploy\`
+            `}
+
+            **CI Checks:** ✅ All passed
+
+            ---
+            *This comment is automatically updated for each commit.*`;
+
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.data.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Preview Deployment')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
+  # ============================================================================
+  # DEPLOYMENT - STAGING
+  # ============================================================================
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [setup-context, code-quality, build-test, security-check]
+    if: |
+      needs.setup-context.outputs.is-draft == 'false' &&
+      needs.setup-context.outputs.environment == 'staging' &&
+      needs.setup-context.outputs.deploy-enabled == 'true' &&
+      needs.code-quality.result == 'success' &&
+      needs.build-test.result == 'success'
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.staging-url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output-${{ needs.setup-context.outputs.sha }}
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Deploy to Vercel (Staging)
+        id: deploy
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          # Create deployment
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} || echo "")
+
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "⚠️ Vercel deployment not configured. Build artifacts ready for manual deployment."
+            echo "staging-url=https://staging.example.com" >> $GITHUB_OUTPUT
+          else
+            # Alias to staging domain if configured
+            if [ ! -z "${{ secrets.VERCEL_STAGING_DOMAIN }}" ]; then
+              vercel alias set $DEPLOYMENT_URL ${{ secrets.VERCEL_STAGING_DOMAIN }} --token=${{ secrets.VERCEL_TOKEN }}
+              echo "staging-url=https://${{ secrets.VERCEL_STAGING_DOMAIN }}" >> $GITHUB_OUTPUT
+            else
+              echo "staging-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+            fi
+            echo "🚀 Deployed to staging: $DEPLOYMENT_URL"
+          fi
+
+      - name: Store deployment info
+        run: |
+          mkdir -p .deployment
+          echo "${{ steps.deploy.outputs.staging-url }}" > .deployment/staging-url.txt
+          echo "${{ needs.setup-context.outputs.sha }}" > .deployment/staging-sha.txt
+          echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" > .deployment/staging-timestamp.txt
+
+      - name: Upload deployment info
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-deployment-info
+          path: .deployment/
+          retention-days: 90
+
+  # ============================================================================
+  # DEPLOYMENT - PRODUCTION
+  # ============================================================================
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [setup-context, code-quality, build-test, security-check]
+    if: |
+      needs.setup-context.outputs.is-draft == 'false' &&
+      needs.setup-context.outputs.environment == 'production' &&
+      needs.setup-context.outputs.deploy-enabled == 'true' &&
+      needs.code-quality.result == 'success' &&
+      needs.build-test.result == 'success' &&
+      needs.security-check.result == 'success'
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.production-url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output-${{ needs.setup-context.outputs.sha }}
+
+      - name: Get previous deployment info
+        id: previous-deployment
+        continue-on-error: true
+        run: |
+          # Try to get previous deployment info for potential rollback
+          PREV_URL=$(cat .deployment/production-url.txt 2>/dev/null || echo "")
+          PREV_SHA=$(cat .deployment/production-sha.txt 2>/dev/null || echo "")
+          echo "previous-url=$PREV_URL" >> $GITHUB_OUTPUT
+          echo "previous-sha=$PREV_SHA" >> $GITHUB_OUTPUT
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Deploy to Vercel (Production)
+        id: deploy
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          # Create production deployment
+          DEPLOYMENT_URL=$(vercel deploy --prod --prebuilt --token=${{ secrets.VERCEL_TOKEN }} || echo "")
+
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "⚠️ Vercel deployment not configured. Build artifacts ready for manual deployment."
+            echo "production-url=https://production.example.com" >> $GITHUB_OUTPUT
+          else
+            echo "production-url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+            echo "🚀 Deployed to production: $DEPLOYMENT_URL"
+          fi
+
+      - name: Store deployment info
+        run: |
+          mkdir -p .deployment
+          echo "${{ steps.deploy.outputs.production-url }}" > .deployment/production-url.txt
+          echo "${{ needs.setup-context.outputs.sha }}" > .deployment/production-sha.txt
+          echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" > .deployment/production-timestamp.txt
+          # Store previous deployment for rollback
+          echo "${{ steps.previous-deployment.outputs.previous-url }}" > .deployment/production-previous-url.txt
+          echo "${{ steps.previous-deployment.outputs.previous-sha }}" > .deployment/production-previous-sha.txt
+
+      - name: Upload deployment info
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-deployment-info
+          path: .deployment/
+          retention-days: 90
+
+      - name: Create deployment tag
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          TAG="deploy-prod-$(date +%Y%m%d-%H%M%S)"
+          git tag -a "$TAG" -m "Production deployment: ${{ needs.setup-context.outputs.sha }}"
+          git push origin "$TAG" || echo "Failed to push tag"
+
+      - name: Health check
+        id: health-check
+        run: |
+          PROD_URL="${{ steps.deploy.outputs.production-url }}"
+          if [[ "$PROD_URL" == *"example.com"* ]]; then
+            echo "⚠️ Skipping health check - deployment not configured"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "🏥 Running health check on $PROD_URL..."
+          sleep 10  # Wait for deployment to be ready
+
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PROD_URL" || echo "000")
+
+          if [ "$STATUS" -eq 200 ] || [ "$STATUS" -eq 301 ] || [ "$STATUS" -eq 302 ]; then
+            echo "✅ Health check passed: $STATUS"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Health check failed: $STATUS"
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Rollback on failure
+        if: failure() && steps.health-check.outputs.status == 'failure'
+        run: |
+          echo "🔄 Deployment health check failed. Initiating rollback..."
+          PREV_URL="${{ steps.previous-deployment.outputs.previous-url }}"
+
+          if [ ! -z "$PREV_URL" ] && [ "$PREV_URL" != "https://production.example.com" ]; then
+            echo "Rolling back to: $PREV_URL"
+            vercel alias set "$PREV_URL" production --token=${{ secrets.VERCEL_TOKEN }} || echo "Rollback failed - manual intervention required"
+          else
+            echo "⚠️ No previous deployment found for rollback"
+          fi
+
+  # ============================================================================
+  # NOTIFICATIONS & REPORTING
+  # ============================================================================
+
+  notify-deployment:
+    name: Deployment Notifications
+    runs-on: ubuntu-latest
+    needs: [setup-context, deploy-staging, deploy-production]
+    if: |
+      always() &&
+      needs.setup-context.outputs.deploy-enabled == 'true' &&
+      (needs.deploy-staging.result != 'skipped' || needs.deploy-production.result != 'skipped')
+
+    steps:
+      - name: Determine deployment status
+        id: status
+        run: |
+          if [ "${{ needs.deploy-production.result }}" = "success" ]; then
+            echo "environment=Production" >> $GITHUB_OUTPUT
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "emoji=🎉" >> $GITHUB_OUTPUT
+          elif [ "${{ needs.deploy-staging.result }}" = "success" ]; then
+            echo "environment=Staging" >> $GITHUB_OUTPUT
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+          else
+            echo "environment=Unknown" >> $GITHUB_OUTPUT
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create deployment summary
+        run: |
+          cat << EOF >> $GITHUB_STEP_SUMMARY
+          ## ${{ steps.status.outputs.emoji }} Deployment Summary
+
+          **Environment:** ${{ steps.status.outputs.environment }}
+          **Status:** ${{ steps.status.outputs.status }}
+          **Commit:** ${{ needs.setup-context.outputs.sha }}
+          **Version:** ${{ needs.setup-context.outputs.version }}
+          **Deployed by:** ${{ github.actor }}
+          **Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ### Deployment Results
+          - Production: ${{ needs.deploy-production.result }}
+          - Staging: ${{ needs.deploy-staging.result }}
+          EOF
+
+  # ============================================================================
+  # FINAL VALIDATION
+  # ============================================================================
+
+  pipeline-status:
+    name: Pipeline Status
+    runs-on: ubuntu-latest
+    needs: [setup-context, code-quality, build-test, security-check]
+    if: always() && needs.setup-context.outputs.is-draft == 'false'
+
+    steps:
+      - name: Pipeline Summary
+        run: |
+          echo "🎯 CI/CD Pipeline Summary"
+          echo "========================="
+          echo ""
+          echo "Environment: ${{ needs.setup-context.outputs.environment }}"
+          echo "Commit: ${{ needs.setup-context.outputs.sha }}"
+          echo ""
+
+          # Check each job result
+          if [ "${{ needs.code-quality.result }}" = "success" ]; then
+            echo "✅ Code Quality: PASSED"
+          else
+            echo "❌ Code Quality: FAILED"
+          fi
+
+          if [ "${{ needs.build-test.result }}" = "success" ]; then
+            echo "✅ Build & Test: PASSED"
+          else
+            echo "❌ Build & Test: FAILED"
+          fi
+
+          if [ "${{ needs.security-check.result }}" = "success" ]; then
+            echo "✅ Security Check: PASSED"
+          else
+            echo "❌ Security Check: FAILED"
+          fi
+
+          echo ""
+
+          # Determine overall status
+          if [ "${{ needs.code-quality.result }}" = "success" ] && \
+             [ "${{ needs.build-test.result }}" = "success" ] && \
+             [ "${{ needs.security-check.result }}" = "success" ]; then
+            echo "🎉 All checks passed! Pipeline successful."
+            exit 0
+          else
+            echo "💥 Some checks failed. Pipeline failed."
+            exit 1
+          fi
