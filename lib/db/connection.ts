@@ -1,4 +1,5 @@
 import * as mongoose from "mongoose";
+console.log("MONGODB_URI:", process.env.MONGODB_URI);
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -18,12 +19,12 @@ if (!cached) {
   (globalThis as any).mongoose = cached;
 }
 
-export async function connectDB(): Promise<typeof mongoose> {
+const connectDB = async function(): Promise<typeof mongoose> {
   if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
     const opts = { bufferCommands: false };
-    cached.promise = mongoose.connect(MONGODB_URI, opts);
+    cached.promise = mongoose.connect(MONGODB_URI!, opts); 
   }
 
   try {
@@ -35,3 +36,5 @@ export async function connectDB(): Promise<typeof mongoose> {
 
   return cached.conn;
 }
+
+export default connectDB;

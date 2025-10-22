@@ -11,6 +11,7 @@ import { SnippetEditor } from '@/components/snippet-editor';
 import { defaultCategories } from '@/lib/snippets/default-categories';
 import { SnippetService } from '@/lib/db/services/snippetService';
 import { Snippet, Category } from '@/types/snippet';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function SnippetLibraryPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>();
@@ -108,7 +109,7 @@ export default function SnippetLibraryPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <Spinner size="lg" className="w-32 h-32 border-b-2" />
           <p className="mt-4 text-muted-foreground">Loading snippets...</p>
         </div>
       </div>

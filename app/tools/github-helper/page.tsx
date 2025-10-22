@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Download, Loader2 } from 'lucide-react';
 import { generateDescription, generateTags, generateReadme } from '@/lib/gemini';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function GitHubHelperPage() {
   const [projectDescription, setProjectDescription] = useState('');
@@ -129,11 +130,15 @@ export default function GitHubHelperPage() {
                   )}
                   Generate Description
                 </Button>
-                {generatedDescription && (
+                {(generatedDescription || isLoading.description) && (
                   <div className="space-y-2">
                     <Label>Generated Description</Label>
-                    <div className="p-4 rounded-md bg-muted">
-                      {generatedDescription}
+                    <div className="p-4 rounded-md bg-muted min-h-[50px] flex items-center justify-center">
+                      {isLoading.description ? (
+                        <Spinner size="sm" />
+                      ) : (
+                        generatedDescription
+                      )}
                     </div>
                   </div>
                 )}
@@ -153,18 +158,22 @@ export default function GitHubHelperPage() {
                   )}
                   Generate Tags
                 </Button>
-                {generatedTags.length > 0 && (
+                {(generatedTags.length > 0 || isLoading.tags) && (
                   <div className="space-y-2">
                     <Label>Generated Tags</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {generatedTags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                    <div className="flex flex-wrap gap-2 p-4 rounded-md bg-muted min-h-[50px] items-center justify-center">
+                      {isLoading.tags ? (
+                        <Spinner size="sm" />
+                      ) : (
+                        generatedTags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm"
+                          >
+                            {tag}
+                          </span>
+                        ))
+                      )}
                     </div>
                   </div>
                 )}
@@ -255,11 +264,15 @@ export default function GitHubHelperPage() {
                     </Button>
                   )}
                 </div>
-                {readmeContent && (
+                {(readmeContent || isLoading.readme) && (
                   <div className="space-y-2">
                     <Label>Generated README</Label>
-                    <div className="p-4 rounded-md bg-muted prose dark:prose-invert max-w-none">
-                      <pre className="whitespace-pre-wrap">{readmeContent}</pre>
+                    <div className="p-4 rounded-md bg-muted prose dark:prose-invert max-w-none min-h-[50px] flex items-center justify-center">
+                      {isLoading.readme ? (
+                        <Spinner size="sm" />
+                      ) : (
+                        <pre className="whitespace-pre-wrap">{readmeContent}</pre>
+                      )}
                     </div>
                   </div>
                 )}

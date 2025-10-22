@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TemplateService } from '@/lib/db/services/templateService';
-import { VariableService } from '@/lib/db/services/variableService';
 import { Template, Variable } from '@/types';
 import { TemplateEditor } from '@/components/template-editor';
 import { VariableForm } from '@/components/variable-form';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function TemplateManagerPage() {
   const [variables, setVariables] = useState<Variable[]>([]);
@@ -23,14 +22,11 @@ export default function TemplateManagerPage() {
       setLoading(true);
 
       // Initialize default data if needed
-      await TemplateService.initializeDefaultTemplates();
-      await VariableService.initializeDefaultVariables();
+      const templatesRes = await fetch("/api/templates");
+      const variablesRes = await fetch("/api/variables");
+      const templatesData = await templatesRes.json();
+      const variablesData = await variablesRes.json();
 
-      // Load data
-      const [templatesData, variablesData] = await Promise.all([
-        TemplateService.getAllTemplates(),
-        VariableService.getAllVariables()
-      ]);
 
       setTemplates(templatesData);
       setVariables(variablesData);
@@ -45,24 +41,38 @@ export default function TemplateManagerPage() {
     }
   };
   const handleCreateTemplate = async () => {
-    const newTemplate = await TemplateService.createTemplate({
-      name: 'Untitled',
-      category: 'blog',
-      content: 'New content...',
-    });
-    setTemplates([newTemplate, ...templates]);
-    setSelectedTemplate(newTemplate);
+    try {
+      const res = await fetch('/api/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Untitled',
+          category: 'blog',
+          content: 'New content...',
+        }),
+      });
+      const newTemplate = await res.json();
+      setTemplates([newTemplate, ...templates]);
+      setSelectedTemplate(newTemplate);
+    } catch (error) {
+      console.error('Error creating template:', error);
+    }
   };
 
   const handleVariableChange = async (key: string, value: string) => {
     try {
-      const updatedVariable = await VariableService.updateVariable(key, {
-        key,
-        value,
-        label: variables.find(v => v.key === key)?.label || '',
-        description: variables.find(v => v.key === key)?.description
+      const variableToUpdate = variables.find(v => v.key === key);
+      const res = await fetch(`/api/variables`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          key,
+          value,
+          label: variableToUpdate?.label || '',
+          description: variableToUpdate?.description,
+        }),
       });
-
+      const updatedVariable = await res.json();
       if (updatedVariable) {
         setVariables(variables.map((v) => (v.key === key ? updatedVariable : v)));
       }
@@ -75,7 +85,7 @@ export default function TemplateManagerPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <Spinner size="lg" className="w-32 h-32 border-b-2" />
           <p className="mt-4 text-muted-foreground">Loading templates...</p>
         </div>
       </div>

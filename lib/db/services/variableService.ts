@@ -1,5 +1,5 @@
 import connectDB from '../connection';
-import Variable, { VariableDocument } from '../models/Variable';
+import Variable from '../models/Variable';
 import { Variable as IVariable } from '@/types';
 
 export class VariableService {

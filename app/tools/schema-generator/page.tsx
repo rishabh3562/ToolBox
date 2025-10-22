@@ -11,6 +11,7 @@ import { Download, Loader2, Database, Code, Save, Trash2 } from 'lucide-react';
 import { generateSchema, generateSQLCode } from '@/lib/schema/generate-schema';
 import { SchemaService } from '@/lib/db/services/schemaService';
 import { Schema, DatabaseType, SchemaGeneratorResponse } from '@/types/schema';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function SchemaGeneratorPage() {
   const [prompt, setPrompt] = useState('');
@@ -226,7 +227,7 @@ export default function SchemaGeneratorPage() {
                   <h3 className="text-lg font-semibold mb-4">Saved Schemas</h3>
                   {loading ? (
                     <div className="text-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+                      <Spinner size="lg" className="mx-auto" />
                       <p className="mt-2 text-muted-foreground">Loading schemas...</p>
                     </div>
                   ) : savedSchemas.length === 0 ? (
