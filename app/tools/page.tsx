@@ -1,5 +1,5 @@
-import { tools } from '@/lib/tools';
-import { ToolCard } from '@/components/tool-card';
+import { tools } from "@/lib/tools";
+import { ToolCard } from "@/components/tool-card";
 
 export default function ToolsPage() {
   return (
@@ -11,7 +11,7 @@ export default function ToolsPage() {
             Choose from our collection of professional development tools
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tools.map((tool) => (
             <ToolCard key={tool.id} tool={tool} />

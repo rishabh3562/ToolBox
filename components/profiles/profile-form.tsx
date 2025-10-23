@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Profile, PlatformType } from '@/types/profile';
-import { platforms } from '@/lib/profiles/platforms';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import * as Icons from 'lucide-react';
+import { useState } from "react";
+import { Profile, PlatformType } from "@/types/profile";
+import { platforms } from "@/lib/profiles/platforms";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import * as Icons from "lucide-react";
 
 interface ProfileFormProps {
   profile?: Profile;
@@ -19,20 +25,23 @@ interface ProfileFormProps {
 
 export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
   const [formData, setFormData] = useState({
-    name: profile?.name || '',
-    handle: profile?.handle || '',
-    platform: profile?.platform || 'youtube' as PlatformType,
-    imageUrl: profile?.imageUrl || '',
-    description: profile?.description || '',
-    categories: profile?.categories.join(', ') || '',
-    url: profile?.url || ''
+    name: profile?.name || "",
+    handle: profile?.handle || "",
+    platform: profile?.platform || ("youtube" as PlatformType),
+    imageUrl: profile?.imageUrl || "",
+    description: profile?.description || "",
+    categories: profile?.categories.join(", ") || "",
+    url: profile?.url || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
       ...formData,
-      categories: formData.categories.split(',').map(c => c.trim()).filter(Boolean)
+      categories: formData.categories
+        .split(",")
+        .map((c) => c.trim())
+        .filter(Boolean),
     });
   };
 
@@ -46,7 +55,9 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Creator name"
                 required
               />
@@ -56,7 +67,9 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
               <Input
                 id="handle"
                 value={formData.handle}
-                onChange={(e) => setFormData({ ...formData, handle: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, handle: e.target.value })
+                }
                 placeholder="@handle"
                 required
               />
@@ -67,18 +80,24 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
             <Label>Platform</Label>
             <Select
               value={formData.platform}
-              onValueChange={(value) => setFormData({ ...formData, platform: value as PlatformType })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, platform: value as PlatformType })
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select platform" />
               </SelectTrigger>
               <SelectContent>
                 {platforms.map((platform) => {
-                  const Icon = Icons[platform.icon as keyof typeof Icons] as React.ComponentType<{ className?: string }>;
+                  const Icon = Icons[
+                    platform.icon as keyof typeof Icons
+                  ] as React.ComponentType<{ className?: string }>;
                   return (
                     <SelectItem key={platform.id} value={platform.id}>
                       <div className="flex items-center gap-2">
-                        {Icon && <Icon className={`w-4 h-4 ${platform.color}`} />}
+                        {Icon && (
+                          <Icon className={`w-4 h-4 ${platform.color}`} />
+                        )}
                         <span>{platform.name}</span>
                       </div>
                     </SelectItem>
@@ -93,7 +112,9 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
             <Input
               id="imageUrl"
               value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, imageUrl: e.target.value })
+              }
               placeholder="https://example.com/image.jpg"
             />
           </div>
@@ -103,7 +124,9 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
             <Textarea
               id="description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               placeholder="What does this creator do?"
               className="min-h-[100px]"
               required
@@ -115,7 +138,9 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
             <Input
               id="categories"
               value={formData.categories}
-              onChange={(e) => setFormData({ ...formData, categories: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, categories: e.target.value })
+              }
               placeholder="Tech, Productivity, Entertainment"
               required
             />
@@ -126,7 +151,9 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
             <Input
               id="url"
               value={formData.url}
-              onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, url: e.target.value })
+              }
               placeholder="https://platform.com/profile"
               required
             />
@@ -138,7 +165,7 @@ export function ProfileForm({ profile, onSubmit, onCancel }: ProfileFormProps) {
             Cancel
           </Button>
           <Button type="submit">
-            {profile ? 'Update Profile' : 'Add Profile'}
+            {profile ? "Update Profile" : "Add Profile"}
           </Button>
         </div>
       </form>

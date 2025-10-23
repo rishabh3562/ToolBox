@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
@@ -10,81 +10,94 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Download, Loader2 } from 'lucide-react';
 import { generateDescription, generateTags, generateReadme } from '@/lib/gemini';
 import { Spinner } from '@/components/ui/spinner';
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Download, Loader2 } from "lucide-react";
+import {
+  generateDescription,
+  generateTags,
+  generateReadme,
+} from "@/lib/gemini";
 
 export default function GitHubHelperPage() {
-  const [projectDescription, setProjectDescription] = useState('');
-  const [generatedDescription, setGeneratedDescription] = useState('');
+  const [projectDescription, setProjectDescription] = useState("");
+  const [generatedDescription, setGeneratedDescription] = useState("");
   const [generatedTags, setGeneratedTags] = useState<string[]>([]);
-  const [readmeContent, setReadmeContent] = useState('');
+  const [readmeContent, setReadmeContent] = useState("");
   const [isLoading, setIsLoading] = useState({
     description: false,
     tags: false,
     readme: false,
   });
   const [projectData, setProjectData] = useState({
-    title: '',
-    features: '',
-    installation: '',
-    usage: '',
-    contributing: '',
-    license: 'MIT',
+    title: "",
+    features: "",
+    installation: "",
+    usage: "",
+    contributing: "",
+    license: "MIT",
   });
 
   const handleGenerateDescription = async () => {
     setIsLoading((prev) => ({ ...prev, description: true }));
-    let fullDescription = '';
-    
+    let fullDescription = "";
+
     await generateDescription(projectDescription, ({ text, done }) => {
       if (!done) {
         fullDescription += text;
         setGeneratedDescription(fullDescription);
       }
     });
-    
+
     setIsLoading((prev) => ({ ...prev, description: false }));
   };
 
   const handleGenerateTags = async () => {
     setIsLoading((prev) => ({ ...prev, tags: true }));
-    let fullTags = '';
-    
+    let fullTags = "";
+
     await generateTags(projectDescription, ({ text, done }) => {
       if (!done) {
         fullTags += text;
-        setGeneratedTags(fullTags.split(',').map((tag) => tag.trim()));
+        setGeneratedTags(fullTags.split(",").map((tag) => tag.trim()));
       }
     });
-    
+
     setIsLoading((prev) => ({ ...prev, tags: false }));
   };
 
   const handleGenerateReadme = async () => {
     setIsLoading((prev) => ({ ...prev, readme: true }));
-    let fullReadme = '';
-    
+    let fullReadme = "";
+
     await generateReadme(
       {
         ...projectData,
         description: generatedDescription,
-        features: projectData.features.split('\n'),
+        features: projectData.features.split("\n"),
       },
       ({ text, done }) => {
         if (!done) {
           fullReadme += text;
           setReadmeContent(fullReadme);
         }
-      }
+      },
     );
-    
+
     setIsLoading((prev) => ({ ...prev, readme: false }));
   };
 
   const downloadReadme = () => {
-    const blob = new Blob([readmeContent], { type: 'text/markdown' });
+    const blob = new Blob([readmeContent], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'README.md';
+    a.download = "README.md";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -97,7 +110,8 @@ export default function GitHubHelperPage() {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">GitHub Project Helper</h1>
           <p className="text-muted-foreground">
-            Generate professional GitHub repository descriptions, tags, and README files
+            Generate professional GitHub repository descriptions, tags, and
+            README files
           </p>
         </div>
 
@@ -112,7 +126,9 @@ export default function GitHubHelperPage() {
             <Card className="p-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="project-description">Project Description</Label>
+                  <Label htmlFor="project-description">
+                    Project Description
+                  </Label>
                   <Textarea
                     id="project-description"
                     placeholder="Enter your project description..."
@@ -191,30 +207,43 @@ export default function GitHubHelperPage() {
                       id="project-title"
                       value={projectData.title}
                       onChange={(e) =>
-                        setProjectData({ ...projectData, title: e.target.value })
+                        setProjectData({
+                          ...projectData,
+                          title: e.target.value,
+                        })
                       }
                       placeholder="Enter project title"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="project-features">Features (one per line)</Label>
+                    <Label htmlFor="project-features">
+                      Features (one per line)
+                    </Label>
                     <Textarea
                       id="project-features"
                       value={projectData.features}
                       onChange={(e) =>
-                        setProjectData({ ...projectData, features: e.target.value })
+                        setProjectData({
+                          ...projectData,
+                          features: e.target.value,
+                        })
                       }
                       placeholder="Enter project features"
                       className="min-h-[100px]"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="project-installation">Installation (optional)</Label>
+                    <Label htmlFor="project-installation">
+                      Installation (optional)
+                    </Label>
                     <Textarea
                       id="project-installation"
                       value={projectData.installation}
                       onChange={(e) =>
-                        setProjectData({ ...projectData, installation: e.target.value })
+                        setProjectData({
+                          ...projectData,
+                          installation: e.target.value,
+                        })
                       }
                       placeholder="Enter installation instructions"
                     />
@@ -225,7 +254,10 @@ export default function GitHubHelperPage() {
                       id="project-usage"
                       value={projectData.usage}
                       onChange={(e) =>
-                        setProjectData({ ...projectData, usage: e.target.value })
+                        setProjectData({
+                          ...projectData,
+                          usage: e.target.value,
+                        })
                       }
                       placeholder="Enter usage examples"
                     />
@@ -236,7 +268,10 @@ export default function GitHubHelperPage() {
                       id="project-license"
                       value={projectData.license}
                       onChange={(e) =>
-                        setProjectData({ ...projectData, license: e.target.value })
+                        setProjectData({
+                          ...projectData,
+                          license: e.target.value,
+                        })
                       }
                       placeholder="Enter license (default: MIT)"
                     />

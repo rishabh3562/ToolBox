@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { Profile } from '@/types/profile';
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { getPlatform } from '@/lib/profiles/platforms';
-import * as Icons from 'lucide-react';
-import Link from 'next/link';
+import { Profile } from "@/types/profile";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { getPlatform } from "@/lib/profiles/platforms";
+import * as Icons from "lucide-react";
+import Link from "next/link";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -16,7 +16,9 @@ interface ProfileCardProps {
 
 export function ProfileCard({ profile, onEdit, onDelete }: ProfileCardProps) {
   const platform = getPlatform(profile.platform);
-  const PlatformIcon = (platform ? Icons[platform.icon as keyof typeof Icons] : Icons.Globe) as React.ComponentType<{ className?: string }>;
+  const PlatformIcon = (
+    platform ? Icons[platform.icon as keyof typeof Icons] : Icons.Globe
+  ) as React.ComponentType<{ className?: string }>;
 
   return (
     <Card className="p-6 hover:shadow-lg transition-shadow">
@@ -46,12 +48,20 @@ export function ProfileCard({ profile, onEdit, onDelete }: ProfileCardProps) {
             </div>
             <div className="flex gap-2">
               {onEdit && (
-                <Button variant="ghost" size="icon" onClick={() => onEdit(profile)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(profile)}
+                >
                   <Icons.Edit className="w-4 h-4" />
                 </Button>
               )}
               {onDelete && (
-                <Button variant="ghost" size="icon" onClick={() => onDelete(profile)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onDelete(profile)}
+                >
                   <Icons.Trash2 className="w-4 h-4" />
                 </Button>
               )}

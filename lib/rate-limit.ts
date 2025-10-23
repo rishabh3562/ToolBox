@@ -16,16 +16,21 @@ export const RATE_LIMIT_CONFIG = {
 function parseWindowToMs(window: string): number {
   const match = /^(\d+)\s*([smhd])$/.exec(window);
   if (!match) throw new Error(`Invalid window format: ${window}`);
-  
+
   const value = Number(match[1]);
   const unit = match[2];
-  
+
   switch (unit) {
-    case 's': return value * 1000;
-    case 'm': return value * 60 * 1000;
-    case 'h': return value * 60 * 60 * 1000;
-    case 'd': return value * 24 * 60 * 60 * 1000;
-    default: throw new Error(`Invalid time unit: ${unit}`);
+    case "s":
+      return value * 1000;
+    case "m":
+      return value * 60 * 1000;
+    case "h":
+      return value * 60 * 60 * 1000;
+    case "d":
+      return value * 24 * 60 * 60 * 1000;
+    default:
+      throw new Error(`Invalid time unit: ${unit}`);
   }
 }
 
@@ -52,28 +57,30 @@ function createRateLimiter(config: { requests: number; window: string }) {
     const windowMs = parseWindowToMs(config.window);
     const limit = config.requests;
     const buckets = new Map<string, number[]>(); // timestamps in ms
-    
+
     return {
       async limit(identifier: string) {
         const now = Date.now();
         const cutoff = now - windowMs;
-        const timestamps = (buckets.get(identifier) ?? []).filter(t => t > cutoff);
+        const timestamps = (buckets.get(identifier) ?? []).filter(
+          (t) => t > cutoff,
+        );
         const allowed = timestamps.length < limit;
-        
+
         if (allowed) {
           timestamps.push(now);
         }
         buckets.set(identifier, timestamps);
-        
+
         const remaining = Math.max(0, limit - timestamps.length);
         const oldest = timestamps[0] ?? now;
         const reset = oldest + windowMs;
-        
-        return { 
-          success: allowed, 
-          limit, 
-          remaining, 
-          reset 
+
+        return {
+          success: allowed,
+          limit,
+          remaining,
+          reset,
         };
       },
     };
@@ -116,7 +123,7 @@ export function addRateLimitHeaders(
     limit: number;
     remaining: number;
     reset: number;
-  }
+  },
 ): Response {
   response.headers.set("X-RateLimit-Limit", String(result.limit));
   response.headers.set("X-RateLimit-Remaining", String(result.remaining));
@@ -126,14 +133,12 @@ export function addRateLimitHeaders(
 }
 
 // Rate limit exceeded error response
-export function createRateLimitErrorResponse(
-  result: {
-    success: boolean;
-    limit: number;
-    remaining: number;
-    reset: number;
-  }
-): Response {
+export function createRateLimitErrorResponse(result: {
+  success: boolean;
+  limit: number;
+  remaining: number;
+  reset: number;
+}): Response {
   const retryAfter = Math.max(0, Math.ceil((result.reset - Date.now()) / 1000));
 
   const headers = new Headers({
@@ -154,6 +159,6 @@ export function createRateLimitErrorResponse(
     {
       status: 429,
       headers,
-    }
+    },
   );
 }

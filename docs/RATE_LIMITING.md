@@ -8,26 +8,26 @@ ToolBox implements comprehensive rate limiting to protect API routes against abu
 
 ### Default Limits
 
-| Endpoint Type | Rate Limit | Description |
-|---------------|------------|-------------|
-| **Default** | 100 requests/hour | General endpoints |
-| **API** | 60 requests/minute | Standard API operations |
-| **Templates** | 30 requests/minute | Template CRUD operations |
-| **Snippets** | 50 requests/minute | Code snippet operations |
-| **AI** | 10 requests/minute | AI-powered features (strict limit) |
-| **Auth** | 5 requests/minute | Authentication endpoints |
-| **Upload** | 20 requests/minute | File upload operations |
+| Endpoint Type | Rate Limit         | Description                        |
+| ------------- | ------------------ | ---------------------------------- |
+| **Default**   | 100 requests/hour  | General endpoints                  |
+| **API**       | 60 requests/minute | Standard API operations            |
+| **Templates** | 30 requests/minute | Template CRUD operations           |
+| **Snippets**  | 50 requests/minute | Code snippet operations            |
+| **AI**        | 10 requests/minute | AI-powered features (strict limit) |
+| **Auth**      | 5 requests/minute  | Authentication endpoints           |
+| **Upload**    | 20 requests/minute | File upload operations             |
 
 ### Specific API Endpoints
 
-| Endpoint | Rate Limit | Type |
-|----------|------------|------|
-| `GET /api/templates` | 30/minute | Templates |
-| `POST /api/templates` | 30/minute | Templates |
-| `GET /api/snippets` | 50/minute | Snippets |
-| `POST /api/snippets` | 50/minute | Snippets |
-| `POST /api/ai/generate` | 10/minute | AI |
-| `GET /api/health` | 60/minute | API |
+| Endpoint                | Rate Limit | Type      |
+| ----------------------- | ---------- | --------- |
+| `GET /api/templates`    | 30/minute  | Templates |
+| `POST /api/templates`   | 30/minute  | Templates |
+| `GET /api/snippets`     | 50/minute  | Snippets  |
+| `POST /api/snippets`    | 50/minute  | Snippets  |
+| `POST /api/ai/generate` | 10/minute  | AI        |
+| `GET /api/health`       | 60/minute  | API       |
 
 ## Implementation
 
@@ -45,7 +45,7 @@ export const POST = rateLimitMiddleware.ai(handleAIGenerate);
 
 - `rateLimitMiddleware.api()` - Standard API rate limiting
 - `rateLimitMiddleware.templates()` - Template operations
-- `rateLimitMiddleware.snippets()` - Snippet operations  
+- `rateLimitMiddleware.snippets()` - Snippet operations
 - `rateLimitMiddleware.ai()` - AI features (strict)
 - `rateLimitMiddleware.auth()` - Authentication
 - `rateLimitMiddleware.upload()` - File uploads
@@ -56,9 +56,9 @@ export const POST = rateLimitMiddleware.ai(handleAIGenerate);
 import { withRateLimit } from "@/lib/middleware/rate-limit-middleware";
 
 // First, add to lib/rate-limit.ts:
-// export const RATE_LIMIT_CONFIG = { 
+// export const RATE_LIMIT_CONFIG = {
 //   ...existing config,
-//   custom: { requests: 25, window: "1m" } 
+//   custom: { requests: 25, window: "1m" }
 // } as const;
 //
 // export const rateLimiters = {
@@ -67,10 +67,14 @@ import { withRateLimit } from "@/lib/middleware/rate-limit-middleware";
 // };
 
 export async function GET(request: NextRequest) {
-  return withRateLimit(request, async (req) => {
-    // Your handler logic
-    return NextResponse.json({ success: true });
-  }, "custom"); // Must match a key in rateLimiters
+  return withRateLimit(
+    request,
+    async (req) => {
+      // Your handler logic
+      return NextResponse.json({ success: true });
+    },
+    "custom",
+  ); // Must match a key in rateLimiters
 }
 ```
 
@@ -106,6 +110,7 @@ When rate limits are exceeded, the API returns a `429 Too Many Requests` status:
 ```
 
 Additional headers:
+
 - `Retry-After`: Seconds to wait before retrying
 - `X-RateLimit-Remaining`: Always "0" when rate limited
 
@@ -133,7 +138,7 @@ UPSTASH_REDIS_REST_TOKEN=your-redis-token
 The rate limiter intelligently detects client IP addresses:
 
 1. **X-Forwarded-For** header (load balancers/proxies)
-2. **X-Real-IP** header (reverse proxies)  
+2. **X-Real-IP** header (reverse proxies)
 3. **Fallback**: `127.0.0.1` for development
 
 ## Security Features
@@ -184,7 +189,7 @@ const customHandler = createRateLimitedHandler(
   async (request) => {
     return NextResponse.json({ success: true });
   },
-  "custom-type" // Uses default rate limits
+  "custom-type", // Uses default rate limits
 );
 
 export const GET = customHandler;

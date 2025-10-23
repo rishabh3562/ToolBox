@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
@@ -12,15 +12,32 @@ import { generateSchema, generateSQLCode } from '@/lib/schema/generate-schema';
 import { SchemaService } from '@/lib/db/services/schemaService';
 import { Schema, DatabaseType, SchemaGeneratorResponse } from '@/types/schema';
 import { Spinner } from '@/components/ui/spinner';
+import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Download, Loader2, Database, Code, Save, Trash2 } from "lucide-react";
+import { generateSchema, generateSQLCode } from "@/lib/schema/generate-schema";
+import { SchemaService } from "@/lib/db/services/schemaService";
+import { Schema, DatabaseType, SchemaGeneratorResponse } from "@/types/schema";
 
 export default function SchemaGeneratorPage() {
-  const [prompt, setPrompt] = useState('');
-  const [dbType, setDbType] = useState<DatabaseType>('mysql');
+  const [prompt, setPrompt] = useState("");
+  const [dbType, setDbType] = useState<DatabaseType>("mysql");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedSchema, setGeneratedSchema] = useState<Schema>();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [optimizations, setOptimizations] = useState<string[]>([]);
-  const [sqlCode, setSqlCode] = useState('');
+  const [sqlCode, setSqlCode] = useState("");
   const [savedSchemas, setSavedSchemas] = useState<Schema[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +51,7 @@ export default function SchemaGeneratorPage() {
       const schemas = await SchemaService.getAllSchemas();
       setSavedSchemas(schemas);
     } catch (error) {
-      console.error('Error loading schemas:', error);
+      console.error("Error loading schemas:", error);
     } finally {
       setLoading(false);
     }
@@ -42,7 +59,7 @@ export default function SchemaGeneratorPage() {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    let fullResponse = '';
+    let fullResponse = "";
 
     try {
       await generateSchema(prompt, dbType, ({ text, done }) => {
@@ -60,7 +77,7 @@ export default function SchemaGeneratorPage() {
         }
       });
     } catch (error) {
-      console.error('Error generating schema:', error);
+      console.error("Error generating schema:", error);
     } finally {
       setIsGenerating(false);
     }
@@ -73,7 +90,7 @@ export default function SchemaGeneratorPage() {
       const savedSchema = await SchemaService.createSchema(generatedSchema);
       setSavedSchemas([savedSchema, ...savedSchemas]);
     } catch (error) {
-      console.error('Error saving schema:', error);
+      console.error("Error saving schema:", error);
     }
   };
 
@@ -81,10 +98,10 @@ export default function SchemaGeneratorPage() {
     try {
       const success = await SchemaService.deleteSchema(schemaId);
       if (success) {
-        setSavedSchemas(savedSchemas.filter(s => s.id !== schemaId));
+        setSavedSchemas(savedSchemas.filter((s) => s.id !== schemaId));
       }
     } catch (error) {
-      console.error('Error deleting schema:', error);
+      console.error("Error deleting schema:", error);
     }
   };
 
@@ -94,11 +111,11 @@ export default function SchemaGeneratorPage() {
   };
 
   const downloadSQL = () => {
-    const blob = new Blob([sqlCode], { type: 'text/plain' });
+    const blob = new Blob([sqlCode], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'schema.sql';
+    a.download = "schema.sql";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -111,7 +128,8 @@ export default function SchemaGeneratorPage() {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">Schema Generator</h1>
           <p className="text-muted-foreground">
-            Generate database schemas from natural language descriptions using AI
+            Generate database schemas from natural language descriptions using
+            AI
           </p>
         </div>
 
@@ -120,7 +138,10 @@ export default function SchemaGeneratorPage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Database Type</Label>
-                <Select value={dbType} onValueChange={(value) => setDbType(value as DatabaseType)}>
+                <Select
+                  value={dbType}
+                  onValueChange={(value) => setDbType(value as DatabaseType)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select database type" />
                   </SelectTrigger>
@@ -203,7 +224,9 @@ export default function SchemaGeneratorPage() {
                 <Card className="p-6">
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Suggestions</h3>
+                      <h3 className="text-lg font-semibold mb-2">
+                        Suggestions
+                      </h3>
                       <ul className="list-disc pl-6 space-y-2">
                         {suggestions.map((suggestion, index) => (
                           <li key={index}>{suggestion}</li>
@@ -211,7 +234,9 @@ export default function SchemaGeneratorPage() {
                       </ul>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Optimizations</h3>
+                      <h3 className="text-lg font-semibold mb-2">
+                        Optimizations
+                      </h3>
                       <ul className="list-disc pl-6 space-y-2">
                         {optimizations.map((optimization, index) => (
                           <li key={index}>{optimization}</li>
@@ -229,6 +254,10 @@ export default function SchemaGeneratorPage() {
                     <div className="text-center py-8">
                       <Spinner size="lg" className="mx-auto" />
                       <p className="mt-2 text-muted-foreground">Loading schemas...</p>
+                      <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+                      <p className="mt-2 text-muted-foreground">
+                        Loading schemas...
+                      </p>
                     </div>
                   ) : savedSchemas.length === 0 ? (
                     <p className="text-muted-foreground text-center py-8">

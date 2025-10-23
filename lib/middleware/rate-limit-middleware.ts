@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { rateLimiters, getClientIP, addRateLimitHeaders, createRateLimitErrorResponse } from "../rate-limit";
+import {
+  rateLimiters,
+  getClientIP,
+  addRateLimitHeaders,
+  createRateLimitErrorResponse,
+} from "../rate-limit";
 
 export type RateLimitType = keyof typeof rateLimiters;
 
@@ -9,19 +14,21 @@ export type RateLimitType = keyof typeof rateLimiters;
 export async function withRateLimit(
   request: NextRequest,
   handler: (req: NextRequest) => Promise<NextResponse>,
-  type: RateLimitType = "default"
+  type: RateLimitType = "default",
 ): Promise<NextResponse> {
   try {
     const clientIP = getClientIP(request);
     const identifier = `${clientIP}:${type}`;
-    
+
     // Check rate limit
     const rateLimiter = rateLimiters[type];
     const result = await rateLimiter.limit(identifier);
 
     // If rate limit exceeded, return error response
     if (!result.success) {
-      console.warn(`Rate limit exceeded for IP ${clientIP} on ${type} endpoint`);
+      console.warn(
+        `Rate limit exceeded for IP ${clientIP} on ${type} endpoint`,
+      );
       const errorResponse = createRateLimitErrorResponse(result);
       return new NextResponse(errorResponse.body, {
         status: errorResponse.status,
@@ -47,7 +54,7 @@ export async function withRateLimit(
  */
 export function createRateLimitedHandler(
   handler: (req: NextRequest) => Promise<NextResponse>,
-  type: RateLimitType = "default"
+  type: RateLimitType = "default",
 ) {
   return async (request: NextRequest): Promise<NextResponse> => {
     return withRateLimit(request, handler, type);
@@ -60,19 +67,19 @@ export function createRateLimitedHandler(
 export const rateLimitMiddleware = {
   api: (handler: (req: NextRequest) => Promise<NextResponse>) =>
     createRateLimitedHandler(handler, "api"),
-  
+
   templates: (handler: (req: NextRequest) => Promise<NextResponse>) =>
     createRateLimitedHandler(handler, "templates"),
-  
+
   snippets: (handler: (req: NextRequest) => Promise<NextResponse>) =>
     createRateLimitedHandler(handler, "snippets"),
-  
+
   ai: (handler: (req: NextRequest) => Promise<NextResponse>) =>
     createRateLimitedHandler(handler, "ai"),
-  
+
   auth: (handler: (req: NextRequest) => Promise<NextResponse>) =>
     createRateLimitedHandler(handler, "auth"),
-  
+
   upload: (handler: (req: NextRequest) => Promise<NextResponse>) =>
     createRateLimitedHandler(handler, "upload"),
 };
@@ -82,7 +89,7 @@ export const rateLimitMiddleware = {
  */
 export async function checkRateLimit(
   request: NextRequest,
-  type: RateLimitType = "default"
+  type: RateLimitType = "default",
 ): Promise<{
   success: boolean;
   limit: number;
@@ -92,6 +99,6 @@ export async function checkRateLimit(
   const clientIP = getClientIP(request);
   const identifier = `${clientIP}:${type}`;
   const rateLimiter = rateLimiters[type];
-  
+
   return await rateLimiter.limit(identifier);
 }

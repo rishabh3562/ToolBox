@@ -6,7 +6,7 @@ Copy and paste this entire prompt into Claude Code to make any repository open-s
 
 ---
 
-```
+````
 # MISSION: Make this repository open-source ready with automated issue generation
 
 ## Your Objectives
@@ -102,13 +102,14 @@ When issues become PRs, they should follow:
 - [ ] No breaking changes
 
 Closes #[issue-number]
-```
+````
 
 ## Categories to Scan For
 
 Analyze the codebase and create issues for:
 
 ### 1. Security (CRITICAL PRIORITY)
+
 - Exposed credentials, API keys, tokens
 - Hardcoded secrets in source code
 - Missing .gitignore entries for sensitive files
@@ -119,6 +120,7 @@ Analyze the codebase and create issues for:
 - Missing input validation
 
 ### 2. Code Quality
+
 - Type safety issues (any types, missing types)
 - Missing error handling
 - Code duplication
@@ -129,6 +131,7 @@ Analyze the codebase and create issues for:
 - Large functions that need refactoring
 
 ### 3. Missing Features
+
 - TODO/FIXME comments in code
 - Partially implemented features
 - Missing CRUD operations
@@ -137,6 +140,7 @@ Analyze the codebase and create issues for:
 - Feature requests from comments
 
 ### 4. Performance
+
 - Missing database indexes
 - N+1 query problems
 - Unoptimized algorithms
@@ -146,6 +150,7 @@ Analyze the codebase and create issues for:
 - Synchronous operations that should be async
 
 ### 5. Testing
+
 - Missing unit tests
 - Missing integration tests
 - Missing E2E tests
@@ -154,6 +159,7 @@ Analyze the codebase and create issues for:
 - Untested edge cases
 
 ### 6. Documentation
+
 - Missing README sections
 - No setup instructions
 - Undocumented API endpoints
@@ -163,6 +169,7 @@ Analyze the codebase and create issues for:
 - Outdated documentation
 
 ### 7. Accessibility
+
 - Missing ARIA labels
 - Poor keyboard navigation
 - Missing alt text on images
@@ -171,6 +178,7 @@ Analyze the codebase and create issues for:
 - Screen reader incompatibility
 
 ### 8. Developer Experience
+
 - Missing linting setup
 - No pre-commit hooks
 - Missing CI/CD pipeline
@@ -181,6 +189,7 @@ Analyze the codebase and create issues for:
 ## Implementation Approach
 
 **YOU DECIDE THE BEST APPROACH** based on:
+
 - What tech stack is being used
 - What CI/CD is already in place
 - What the project conventions are
@@ -189,26 +198,31 @@ Analyze the codebase and create issues for:
 ### Possible Approaches:
 
 **For Node.js/JavaScript/TypeScript:**
+
 - GitHub Actions with Node script
 - npm/yarn scripts
 - ESLint plugins for issue detection
 
 **For Python:**
+
 - GitHub Actions with Python script
 - pre-commit hooks
 - pylint/flake8 integration
 
 **For Go:**
+
 - GitHub Actions with Go binary
 - Makefile targets
 - golangci-lint integration
 
 **For Rust:**
+
 - GitHub Actions with Rust binary
 - Cargo scripts
 - clippy integration
 
 **For Any Language:**
+
 - Shell scripts with GitHub API
 - GitHub GraphQL API
 - GitLab CI
@@ -282,7 +296,8 @@ When you're done, the repository should have:
 ## Examples of Great Issues
 
 ### Example 1: Security Issue
-```
+
+````
 Title: security(auth): move JWT secret to environment variable
 
 ## Description
@@ -316,26 +331,31 @@ const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable is required');
 }
-```
+````
+
 ```
 
 ### Example 2: Feature Issue
 ```
+
 Title: feat(api): add pagination to user list endpoint
 
 ## Description
+
 GET /api/users endpoint returns all users without pagination, causing performance
 issues and timeouts with large datasets (currently 50k+ users).
 
 **Affected file**: `src/routes/users.ts:23-35`
 
 ## Impact
+
 - API timeouts with large datasets
 - Poor user experience
 - Excessive database load
 - High bandwidth usage
 
 ## Tasks
+
 - [ ] Add `page` and `limit` query parameters to GET /api/users
 - [ ] Update database query to use LIMIT and OFFSET
 - [ ] Return pagination metadata (total, page, pageSize, totalPages)
@@ -343,13 +363,16 @@ issues and timeouts with large datasets (currently 50k+ users).
 - [ ] Add tests for pagination edge cases
 
 ## Acceptance Criteria
+
 - Endpoint supports `?page=1&limit=20` parameters
 - Returns paginated results with metadata
 - Default limit is 20, max is 100
 - Handles edge cases (page out of range, invalid params)
 
 ## Technical Details
+
 Response format:
+
 ```json
 {
   "data": [...],
@@ -361,6 +384,7 @@ Response format:
   }
 }
 ```
+
 ```
 
 ## Begin Analysis
@@ -384,19 +408,19 @@ Show your work as you go:
 
 ## Quick Reference: Conventional Commit Types
 
-| Type | Use Case | Example |
-|------|----------|---------|
-| `feat` | New features | `feat(auth): add OAuth login` |
-| `fix` | Bug fixes | `fix(api): handle null responses` |
-| `docs` | Documentation only | `docs(readme): add setup guide` |
-| `style` | Code style/formatting | `style(lint): fix ESLint warnings` |
-| `refactor` | Code restructuring | `refactor(db): extract query builder` |
-| `perf` | Performance improvements | `perf(search): add database indexes` |
-| `test` | Adding/updating tests | `test(auth): add login unit tests` |
-| `build` | Build system changes | `build(webpack): optimize bundle size` |
-| `ci` | CI/CD changes | `ci(actions): add test workflow` |
-| `chore` | Maintenance tasks | `chore(deps): update dependencies` |
-| `security` | Security fixes | `security(env): remove exposed keys` |
+| Type       | Use Case                 | Example                                |
+| ---------- | ------------------------ | -------------------------------------- |
+| `feat`     | New features             | `feat(auth): add OAuth login`          |
+| `fix`      | Bug fixes                | `fix(api): handle null responses`      |
+| `docs`     | Documentation only       | `docs(readme): add setup guide`        |
+| `style`    | Code style/formatting    | `style(lint): fix ESLint warnings`     |
+| `refactor` | Code restructuring       | `refactor(db): extract query builder`  |
+| `perf`     | Performance improvements | `perf(search): add database indexes`   |
+| `test`     | Adding/updating tests    | `test(auth): add login unit tests`     |
+| `build`    | Build system changes     | `build(webpack): optimize bundle size` |
+| `ci`       | CI/CD changes            | `ci(actions): add test workflow`       |
+| `chore`    | Maintenance tasks        | `chore(deps): update dependencies`     |
+| `security` | Security fixes           | `security(env): remove exposed keys`   |
 
 ## What Gets Created
 
@@ -413,7 +437,9 @@ After running this prompt, you'll have:
 ## Different Tech Stack Examples
 
 ### Example: Node.js/TypeScript Project
+
 Claude might create:
+
 - `.github/workflows/issues.yml` (GitHub Actions)
 - `.github/scripts/generate-issues.js`
 - `.github/labels.yml`
@@ -421,7 +447,9 @@ Claude might create:
 - Updated `CONTRIBUTING.md`
 
 ### Example: Python Project
+
 Claude might create:
+
 - `.github/workflows/issues.yml` (GitHub Actions)
 - `scripts/generate_issues.py`
 - `.github/labels.yaml`
@@ -429,7 +457,9 @@ Claude might create:
 - Updated `CONTRIBUTING.md`
 
 ### Example: Go Project
+
 Claude might create:
+
 - `.github/workflows/issues.yml`
 - `cmd/issue-generator/main.go`
 - Makefile targets
@@ -437,7 +467,9 @@ Claude might create:
 - Updated `README.md`
 
 ### Example: Mixed Language Project
+
 Claude might create:
+
 - Shell script automation (works everywhere)
 - Language-specific linters integrated
 - Comprehensive issue templates
@@ -473,18 +505,23 @@ Once set up, you can:
 ## Common Use Cases
 
 ### "Make my personal project open source"
+
 Just paste the prompt - Claude will handle everything
 
 ### "Prepare for Hacktoberfest"
+
 Paste the prompt, mention it's for Hacktoberfest
 
 ### "Create contributor-friendly issues"
+
 Paste the prompt, mention you want beginner-friendly issues
 
 ### "Automate issue management"
+
 Paste the prompt, mention automation is priority
 
 ### "Clean up technical debt"
+
 Paste the prompt, mention focus on refactoring and quality
 
 ---

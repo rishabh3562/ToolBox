@@ -7,6 +7,7 @@ All changes have been successfully committed and pushed to your repository!
 **Commit**: `914e2b0` - fix(workflows): improve issue label detection and add label update tooling
 
 **Changes Pushed**:
+
 - ✅ Fixed Hacktoberfest workflow label detection logic
 - ✅ Created automated label update script
 - ✅ Added GitHub Actions workflow for easy updates
@@ -21,11 +22,13 @@ Your Hacktoberfest issues currently have incorrect "bug" labels. Follow these si
 ### Step 1: Go to GitHub Actions
 
 Open this link in your browser:
+
 ```
 https://github.com/rishabh3562/ToolBox/actions/workflows/update-labels.yml
 ```
 
 Or navigate manually:
+
 1. Go to https://github.com/rishabh3562/ToolBox
 2. Click the "Actions" tab
 3. Click "Update Issue Labels" in the left sidebar
@@ -51,6 +54,7 @@ After the workflow completes:
 2. You should see proper labels on all 20 Hacktoberfest issues:
 
 **Expected Label Distribution**:
+
 - `security` - Authentication and security issues (2 issues)
 - `database` - Storage and migration issues (1 issue)
 - `enhancement` - Feature requests (8 issues)
@@ -64,6 +68,7 @@ After the workflow completes:
 - `devops` - CI/CD and deployment (1 issue)
 
 **All issues will have**:
+
 - `hacktoberfest` label
 - `help wanted` label (where applicable)
 - `good first issue` label (where applicable)
@@ -73,6 +78,7 @@ After the workflow completes:
 ## 📊 What the Workflow Does
 
 The workflow will:
+
 1. ✅ Read your `.github/hacktoberfest-issues/ALL.md` file
 2. ✅ Find existing GitHub issues by matching titles
 3. ✅ Determine correct labels based on issue content
@@ -80,6 +86,7 @@ The workflow will:
 5. ✅ Show summary of updates
 
 **Safe Operation**:
+
 - ❌ Will NOT recreate or delete issues
 - ❌ Will NOT modify issue titles or descriptions
 - ❌ Will NOT close any issues
@@ -91,25 +98,31 @@ The workflow will:
 ## 🔍 Monitoring the Workflow
 
 ### While Running:
+
 Click on the workflow run to see real-time logs:
+
 - "Update labels on existing issues" job
 - Watch as each issue is processed
 - See which labels are applied
 
 ### If Something Goes Wrong:
+
 The workflow includes detailed logging. Common issues:
 
 **"Issue not found"**
+
 - Issue title in ALL.md doesn't match GitHub issue title
 - Issue was deleted or renamed
 - Not a problem - workflow will continue with other issues
 
 **"Rate limit exceeded"**
+
 - Too many API calls
 - Wait 1 hour and re-run
 - Very unlikely with only 20 issues
 
 **"Permission denied"**
+
 - Repository permissions issue
 - Should not happen (workflow has correct permissions)
 - Contact GitHub support if this occurs
@@ -121,12 +134,14 @@ The workflow includes detailed logging. Common issues:
 After successful label updates:
 
 ### For Contributors:
+
 - Your issues will be properly categorized
 - Easier for Hacktoberfest participants to find relevant issues
 - Better filtering by label type
 - More accurate skill matching
 
 ### For Your Project:
+
 - Professional issue management
 - Clear organization for open source contributors
 - Better discoverability on GitHub
@@ -148,12 +163,15 @@ Both workflows are now available in your Actions tab!
 ## 🆘 Need Help?
 
 ### Documentation Available:
+
 - **Quick Start**: `.github/scripts/QUICK_START.md`
 - **Full Guide**: `.github/scripts/UPDATE_LABELS_README.md`
 - **Windows Guide**: `.github/scripts/RUN_ON_WINDOWS.md`
 
 ### Alternative Methods:
+
 If GitHub Actions doesn't work, you can also:
+
 1. Run the script locally (see RUN_ON_WINDOWS.md)
 2. Use GitHub CLI (see QUICK_START.md)
 3. Manually update labels (tedious, but possible)
@@ -163,6 +181,7 @@ If GitHub Actions doesn't work, you can also:
 ## ✨ Summary
 
 **What You Need to Do NOW**:
+
 1. Go to: https://github.com/rishabh3562/ToolBox/actions/workflows/update-labels.yml
 2. Click "Run workflow" → "Run workflow"
 3. Wait 30 seconds

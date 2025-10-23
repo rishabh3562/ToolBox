@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Template, Variable } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { TemplateService } from '@/lib/db/services/templateService';
+import { useState } from "react";
+import { Template, Variable } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { TemplateService } from "@/lib/db/services/templateService";
 
 interface TemplateEditorProps {
   template: Template;
@@ -16,7 +16,7 @@ interface TemplateEditorProps {
 export function TemplateEditor({ template, variables }: TemplateEditorProps) {
   const [content, setContent] = useState(template.content);
   const [category, setCategory] = useState(template.category);
-  const [tags, setTags] = useState(template.tags.join(', '));
+  const [tags, setTags] = useState(template.tags.join(", "));
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -27,18 +27,18 @@ export function TemplateEditor({ template, variables }: TemplateEditorProps) {
       await TemplateService.updateTemplate(template.id, {
         content,
         category,
-        tags: tags.split(',').map(t => t.trim()),
+        tags: tags.split(",").map((t) => t.trim()),
       });
-      setSuccess('Template saved successfully!');
+      setSuccess("Template saved successfully!");
     } catch (err) {
-      setError('Failed to save template.');
+      setError("Failed to save template.");
     }
   };
 
   const generateContent = () => {
     let result = content;
     variables.forEach((variable) => {
-      const regex = new RegExp(`{{${variable.key}}}`, 'g');
+      const regex = new RegExp(`{{${variable.key}}}`, "g");
       result = result.replace(regex, variable.value || `[${variable.label}]`);
     });
     return result;

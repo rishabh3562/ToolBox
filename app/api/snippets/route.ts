@@ -27,16 +27,18 @@ async function handleGetSnippets(request: NextRequest): Promise<NextResponse> {
         code: "function debounce<T extends (...args: any[]) => any>(\n  func: T,\n  delay: number\n): (...args: Parameters<T>) => void {\n  let timeoutId: NodeJS.Timeout;\n  return (...args: Parameters<T>) => {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => func(...args), delay);\n  };\n}",
         tags: ["performance", "utility", "typescript"],
         createdAt: new Date().toISOString(),
-      }
+      },
     ];
 
     // Filter by language if specified
     let filteredSnippets = snippets;
     if (language) {
-      filteredSnippets = filteredSnippets.filter(s => s.language === language);
+      filteredSnippets = filteredSnippets.filter(
+        (s) => s.language === language,
+      );
     }
     if (tag) {
-      filteredSnippets = filteredSnippets.filter(s => s.tags.includes(tag));
+      filteredSnippets = filteredSnippets.filter((s) => s.tags.includes(tag));
     }
 
     return NextResponse.json({
@@ -49,13 +51,15 @@ async function handleGetSnippets(request: NextRequest): Promise<NextResponse> {
     console.error("Error fetching snippets:", error);
     return NextResponse.json(
       { error: "Failed to fetch snippets" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // POST /api/snippets - Create a new code snippet
-async function handleCreateSnippet(request: NextRequest): Promise<NextResponse> {
+async function handleCreateSnippet(
+  request: NextRequest,
+): Promise<NextResponse> {
   try {
     const body = await request.json();
     const { title, description, language, code, tags } = body;
@@ -64,19 +68,31 @@ async function handleCreateSnippet(request: NextRequest): Promise<NextResponse> 
     if (!title || !code || !language) {
       return NextResponse.json(
         { error: "Title, code, and language are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Validate language
     const supportedLanguages = [
-      "javascript", "typescript", "python", "java", "go", 
-      "rust", "cpp", "c", "csharp", "php", "ruby", "swift"
+      "javascript",
+      "typescript",
+      "python",
+      "java",
+      "go",
+      "rust",
+      "cpp",
+      "c",
+      "csharp",
+      "php",
+      "ruby",
+      "swift",
     ];
     if (!supportedLanguages.includes(language.toLowerCase())) {
       return NextResponse.json(
-        { error: `Unsupported language. Supported: ${supportedLanguages.join(", ")}` },
-        { status: 400 }
+        {
+          error: `Unsupported language. Supported: ${supportedLanguages.join(", ")}`,
+        },
+        { status: 400 },
       );
     }
 
@@ -92,16 +108,19 @@ async function handleCreateSnippet(request: NextRequest): Promise<NextResponse> 
       updatedAt: new Date().toISOString(),
     };
 
-    return NextResponse.json({
-      success: true,
-      data: newSnippet,
-      message: "Snippet created successfully",
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: newSnippet,
+        message: "Snippet created successfully",
+      },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Error creating snippet:", error);
     return NextResponse.json(
       { error: "Failed to create snippet" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

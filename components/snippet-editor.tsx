@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Editor } from '@monaco-editor/react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Copy, Save } from 'lucide-react';
-import { Snippet } from '@/types/snippet';
+import { useState } from "react";
+import { Editor } from "@monaco-editor/react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Copy, Save } from "lucide-react";
+import { Snippet } from "@/types/snippet";
 
 interface SnippetEditorProps {
   snippet?: Snippet;
@@ -17,11 +23,13 @@ interface SnippetEditorProps {
 }
 
 export function SnippetEditor({ snippet, onSave }: SnippetEditorProps) {
-  const [code, setCode] = useState(snippet?.code || '');
-  const [title, setTitle] = useState(snippet?.title || '');
-  const [description, setDescription] = useState(snippet?.description || '');
-  const [language, setLanguage] = useState(snippet?.language || 'javascript');
-  const [documentation, setDocumentation] = useState(snippet?.documentation || '');
+  const [code, setCode] = useState(snippet?.code || "");
+  const [title, setTitle] = useState(snippet?.title || "");
+  const [description, setDescription] = useState(snippet?.description || "");
+  const [language, setLanguage] = useState(snippet?.language || "javascript");
+  const [documentation, setDocumentation] = useState(
+    snippet?.documentation || "",
+  );
 
   const handleSave = () => {
     onSave({
@@ -31,7 +39,7 @@ export function SnippetEditor({ snippet, onSave }: SnippetEditorProps) {
       language,
       tags: [],
       documentation,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
   };
 
@@ -84,12 +92,12 @@ export function SnippetEditor({ snippet, onSave }: SnippetEditorProps) {
               height="300px"
               language={language}
               value={code}
-              onChange={(value) => setCode(value || '')}
+              onChange={(value) => setCode(value || "")}
               theme="vs-dark"
               options={{
                 minimap: { enabled: false },
                 fontSize: 14,
-                lineNumbers: 'on',
+                lineNumbers: "on",
                 scrollBeyondLastLine: false,
                 automaticLayout: true,
               }}

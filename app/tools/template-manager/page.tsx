@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useState, useEffect, useCallback } from 'react';
-import { TemplateService } from '@/lib/db/services/templateService';
-import { VariableService } from '@/lib/db/services/variableService';
-import { Template, Variable } from '@/types';
-import { TemplateEditor } from '@/components/template-editor';
-import { VariableForm } from '@/components/variable-form';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Spinner } from '@/components/ui/spinner';
-import { Input } from '@/components/ui/input';
-import { MultiSelect } from '@/components/ui/multi-select';
+import { useState, useEffect, useCallback } from "react";
+import { TemplateService } from "@/lib/db/services/templateService";
+import { VariableService } from "@/lib/db/services/variableService";
+import { Template, Variable } from "@/types";
+import { TemplateEditor } from "@/components/template-editor";
+import { VariableForm } from "@/components/variable-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 export default function TemplateManagerPage() {
   const [variables, setVariables] = useState<Variable[]>([]);
   const [templates, setTemplates] = useState<Template[]>([]);
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [tags, setTags] = useState('');
+  const [tags, setTags] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,11 +33,14 @@ export default function TemplateManagerPage() {
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
-      
+
       const templatesData = await TemplateService.getFilteredTemplates({
         searchQuery,
         categories: selectedCategories,
-        tags: tags.split(',').map(t => t.trim()).filter(t => t),
+        tags: tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter((t) => t),
       });
 
       // Initialize default data if needed
@@ -57,7 +60,7 @@ export default function TemplateManagerPage() {
         setSelectedTemplate(null);
       }
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
     } finally {
       setLoading(false);
     }
@@ -70,43 +73,41 @@ export default function TemplateManagerPage() {
     try {
       setError(null);
       const newTemplate = await TemplateService.createTemplate({
-        name: 'Untitled',
-        category: 'blog',
-        content: 'New content...',
+        name: "Untitled",
+        category: "blog",
+        content: "New content...",
+        tags: [],
       });
       setTemplates([newTemplate, ...templates]);
       setSelectedTemplate(newTemplate);
     } catch (err) {
-      setError('Failed to create template.');
+      setError("Failed to create template.");
     }
   };
 
   const handleVariableChange = async (key: string, value: string) => {
     try {
-      const variableToUpdate = variables.find(v => v.key === key);
-      const res = await fetch(`/api/variables`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          key,
-          value,
-          label: variableToUpdate?.label || '',
-          description: variableToUpdate?.description,
-        }),
+      const updatedVariable = await VariableService.updateVariable(key, {
+        key,
+        value,
+        label: variables.find((v) => v.key === key)?.label || "",
+        description: variables.find((v) => v.key === key)?.description,
       });
       const updatedVariable = await res.json();
       if (updatedVariable) {
-        setVariables(variables.map((v) => (v.key === key ? updatedVariable : v)));
+        setVariables(
+          variables.map((v) => (v.key === key ? updatedVariable : v)),
+        );
       }
     } catch (error) {
-      console.error('Error updating variable:', error);
+      console.error("Error updating variable:", error);
     }
   };
 
   const getHighlightedText = (text: string, highlight: string) => {
     if (!highlight) return <span>{text}</span>;
-    const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+    const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const parts = text.split(new RegExp(`(${escaped})`, "gi"));
     return (
       <span>
         {parts.map((part, i) =>
@@ -114,7 +115,7 @@ export default function TemplateManagerPage() {
             <strong key={i}>{part}</strong>
           ) : (
             part
-          )
+          ),
         )}
       </span>
     );
@@ -150,9 +151,9 @@ export default function TemplateManagerPage() {
             />
             <MultiSelect
               options={[
-                { label: 'Email', value: 'email' },
-                { label: 'Blog', value: 'blog' },
-                { label: 'Social', value: 'social' },
+                { label: "Email", value: "email" },
+                { label: "Blog", value: "blog" },
+                { label: "Social", value: "social" },
               ]}
               onValueChange={setSelectedCategories}
               defaultValue={selectedCategories}
@@ -193,10 +194,7 @@ export default function TemplateManagerPage() {
                 </TabsList>
                 {templates.map((template) => (
                   <TabsContent key={template.id} value={template.id}>
-                    <TemplateEditor
-                      template={template}
-                      variables={variables}
-                    />
+                    <TemplateEditor template={template} variables={variables} />
                   </TabsContent>
                 ))}
               </Tabs>

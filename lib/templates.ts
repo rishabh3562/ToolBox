@@ -8,6 +8,7 @@ export const defaultTemplates: Template[] = [
     content: `As a {{role}}, I've spent considerable time {{experience}}. You can find more of my work at {{portfolio_url}}.
 
 Connect with me on {{linkedin_url}} to discuss more about {{expertise}}.`,
+    tags: ["blog", "introduction", "professional"],
   },
   {
     id: "email-intro",
@@ -15,12 +16,13 @@ Connect with me on {{linkedin_url}} to discuss more about {{expertise}}.`,
     category: "email",
     content: `Hi {{name}},
 
-I hope this email finds you well. I'm {{your_name}}, a {{role}} with expertise in {{expertise}}. 
+I hope this email finds you well. I'm {{your_name}}, a {{role}} with expertise in {{expertise}}.
 
 I'd love to discuss how I can help with {{project_type}}. You can check out my previous work at {{portfolio_url}}.
 
 Best regards,
 {{your_name}}`,
+    tags: ["email", "introduction", "professional"],
   },
   {
     id: "tompate-reply",
@@ -49,5 +51,6 @@ Best regards,
 {{your_name}}
 Freelance Web Developer
 {{portfolio_url}} | {{linkedin_url}} | {{topmate_url}} | {{cal_url}}`,
+    tags: ["email", "topmate", "client-response"],
   },
 ];

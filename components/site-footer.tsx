@@ -1,5 +1,5 @@
-import { Github, Twitter } from 'lucide-react';
-import Link from 'next/link';
+import { Github, Twitter } from "lucide-react";
+import Link from "next/link";
 
 export function SiteFooter() {
   return (
@@ -8,10 +8,7 @@ export function SiteFooter() {
         <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
           <p className="text-center text-sm leading-loose md:text-left">
             Built by{" "}
-            <Link
-              href="/"
-              className="font-medium underline underline-offset-4"
-            >
+            <Link href="/" className="font-medium underline underline-offset-4">
               DevTools
             </Link>
             . The source code is available on{" "}
