@@ -4,6 +4,13 @@ import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
+/**
+ * Theme toggle component that switches between light and dark modes.
+ * Displays sun icon in light mode and moon icon in dark mode with smooth transitions.
+ * 
+ * @component
+ * @returns {JSX.Element | null} The theme toggle button or null during SSR
+ */
 export function ThemeToggle() {
   const [mounted, setMounted] = React.useState(false);
   const { theme, setTheme } = useTheme();
@@ -12,6 +19,7 @@ export function ThemeToggle() {
     setMounted(true);
   }, []);
 
+  // Prevent hydration mismatch by not rendering on server
   if (!mounted) {
     return null;
   }
