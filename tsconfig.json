@@ -15,7 +15,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx", // ✅ Must be "preserve" for Next.js
+    "jsx": "preserve", // ✅ Must be "preserve" for Next.js
     "incremental": true,
     "plugins": [
       {
