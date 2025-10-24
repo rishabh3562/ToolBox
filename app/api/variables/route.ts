@@ -14,15 +14,34 @@ export async function GET() {
 export async function PATCH(request: Request) {
   try {
     const { key, value, label, description } = await request.json();
+    
+    if (!key || typeof key !== 'string') {
+      return NextResponse.json(
+        { error: 'Invalid or missing key' },
+        { status: 400 }
+      );
+    }
+    
     const updatedVariable = await VariableService.updateVariable(key, {
       key,
       value,
       label,
       description,
     });
+    
+    if (!updatedVariable) {
+      return NextResponse.json(
+        { error: 'Variable not found' },
+        { status: 404 }
+      );
+    }
+    
     return NextResponse.json(updatedVariable);
   } catch (error) {
     console.error('Error updating variable:', error);
-    return NextResponse.error();
+    return NextResponse.json(
+      { error: 'Failed to update variable' },
+      { status: 500 }
+    );
   }
 }
