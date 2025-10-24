@@ -30,7 +30,7 @@ permissions:
   deployments: write
 
 env:
-  NODE_VERSION: '18.x'
+  NODE_VERSION: '20.x'
   CACHE_NAME: 'node-modules-v1'
 
 # Cancel previous runs if a new commit is pushed
