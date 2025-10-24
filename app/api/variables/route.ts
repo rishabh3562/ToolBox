@@ -30,6 +30,37 @@ export async function PATCH(request: Request) {
     });
     
     if (!updatedVariable) {
+export async function PATCH(request: Request) {
+  try {
+    const { key, value, label, description } = await request.json();
+    
+    if (!key || typeof key !== 'string') {
+      return NextResponse.json(
+        { error: 'Invalid or missing key' },
+        { status: 400 }
+      );
+    }
+    if (label !== undefined && typeof label !== 'string') {
+      return NextResponse.json(
+        { error: 'Invalid label: expected string' },
+        { status: 400 }
+      );
+    }
+    if (description !== undefined && typeof description !== 'string') {
+      return NextResponse.json(
+        { error: 'Invalid description: expected string' },
+        { status: 400 }
+      );
+    }
+    
+    const updatedVariable = await VariableService.updateVariable(key, {
+      key,
+      value,
+      label,
+      description,
+    });
+    
+    if (!updatedVariable) {
       return NextResponse.json(
         { error: 'Variable not found' },
         { status: 404 }
