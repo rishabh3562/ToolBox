@@ -1,9 +1,31 @@
-import { NextRequest, NextResponse } from "next/server";
-import { rateLimitMiddleware } from "@/lib/middleware/rate-limit-middleware";
+import { NextResponse } from 'next/server';
+import { TemplateService } from '@/lib/db/services/templateService';
 
-// GET /api/templates - Get all templates
-async function handleGetTemplates(request: NextRequest): Promise<NextResponse> {
+export async function GET() {
   try {
+    const templates = await TemplateService.getAllTemplates();
+    return NextResponse.json(templates);
+  } catch (error) {
+    console.error('Error fetching templates:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch templates' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const data = await request.json();
+    const newTemplate = await TemplateService.createTemplate({
+      name: data.name || 'Untitled',
+      category: data.category || 'general',
+      content: data.content || '',
+    });
+    return NextResponse.json(newTemplate);
+  } catch (error) {
+    console.error('Error creating template:', error);
+    return NextResponse.error();
     // Simulate fetching templates from database
     const templates = [
       {
@@ -104,7 +126,3 @@ async function handleCreateTemplate(
     );
   }
 }
-
-// Apply rate limiting to the handlers
-export const GET = rateLimitMiddleware.templates(handleGetTemplates);
-export const POST = rateLimitMiddleware.templates(handleCreateTemplate);

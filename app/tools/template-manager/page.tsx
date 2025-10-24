@@ -43,6 +43,12 @@ export default function TemplateManagerPage() {
           .filter((t) => t),
       });
 
+      // Initialize default data if needed
+      const templatesRes = await fetch("/api/templates");
+      const variablesRes = await fetch("/api/variables");
+      const templatesData = await templatesRes.json();
+      const variablesData = await variablesRes.json();
+
       const variablesData = await VariableService.getAllVariables();
 
       setTemplates(templatesData);
@@ -87,7 +93,7 @@ export default function TemplateManagerPage() {
         label: variables.find((v) => v.key === key)?.label || "",
         description: variables.find((v) => v.key === key)?.description,
       });
-
+      const updatedVariable = await res.json();
       if (updatedVariable) {
         setVariables(
           variables.map((v) => (v.key === key ? updatedVariable : v)),
@@ -119,7 +125,7 @@ export default function TemplateManagerPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <Spinner size="lg" className="w-32 h-32 border-b-2" />
           <p className="mt-4 text-muted-foreground">Loading templates...</p>
         </div>
       </div>

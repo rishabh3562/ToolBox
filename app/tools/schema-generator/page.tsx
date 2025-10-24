@@ -1,5 +1,17 @@
 "use client";
 
+import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Download, Loader2, Database, Code, Save, Trash2 } from 'lucide-react';
+import { generateSchema, generateSQLCode } from '@/lib/schema/generate-schema';
+import { SchemaService } from '@/lib/db/services/schemaService';
+import { Schema, DatabaseType, SchemaGeneratorResponse } from '@/types/schema';
+import { Spinner } from '@/components/ui/spinner';
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -240,6 +252,8 @@ export default function SchemaGeneratorPage() {
                   <h3 className="text-lg font-semibold mb-4">Saved Schemas</h3>
                   {loading ? (
                     <div className="text-center py-8">
+                      <Spinner size="lg" className="mx-auto" />
+                      <p className="mt-2 text-muted-foreground">Loading schemas...</p>
                       <Loader2 className="h-8 w-8 animate-spin mx-auto" />
                       <p className="mt-2 text-muted-foreground">
                         Loading schemas...
