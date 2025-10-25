@@ -4,29 +4,21 @@ import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-/**
- * Theme toggle component that switches between light and dark modes.
- * Displays sun icon in light mode and moon icon in dark mode with smooth transitions.
- * 
- * @component
- * @returns {JSX.Element | null} The theme toggle button or null during SSR
- */
 export function ThemeToggle() {
   const [mounted, setMounted] = React.useState(false);
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme(); // Changed: use resolvedTheme
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Prevent hydration mismatch by not rendering on server
   if (!mounted) {
     return null;
   }
 
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} // Changed: use resolvedTheme
       className="relative inline-flex h-10 w-10 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
       aria-label="Toggle theme"
     >
