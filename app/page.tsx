@@ -75,7 +75,7 @@ export default function Home() {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="https://github.com" target="_blank">
+              <Link href="https://github.com/rishabh3562/ToolBox" target="_blank">
                 <Button size="lg" variant="outline" className="h-12 px-6">
                   View on GitHub
                 </Button>

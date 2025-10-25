@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Wrench, Github } from "lucide-react";
+import { ThemeToggle } from "./theme-toggle";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -40,8 +41,9 @@ export function SiteHeader() {
           </nav>
         </div>
         <div className="ml-auto flex items-center space-x-4">
+          <ThemeToggle />
           <Button variant="outline" size="icon" asChild>
-            <Link href="https://github.com" target="_blank">
+            <Link href="https://github.com/rishabh3562/ToolBox" target="_blank">
               <Github className="h-4 w-4" />
             </Link>
           </Button>
