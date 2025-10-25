@@ -13,7 +13,7 @@ export function SiteFooter() {
             </Link>
             . The source code is available on{" "}
             <Link
-              href="https://github.com"
+              href="https://github.com/rishabh3562/ToolBox"
               target="_blank"
               className="font-medium underline underline-offset-4"
             >
@@ -23,7 +23,7 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="flex items-center space-x-4">
-          <Link href="https://github.com" target="_blank">
+          <Link href="https://github.com/rishabh3562/ToolBox" target="_blank">
             <Github className="h-5 w-5" />
           </Link>
           <Link href="https://twitter.com" target="_blank">
