@@ -94,7 +94,6 @@ export default function AdminToolsPage() {
       const color = s === 'pending' ? 'orange' : s === 'approved' ? 'green' : s === 'changes_requested' ? 'gold' : 'red';
       return <Tag color={color}>{s}</Tag>;
     } },
-    { title: 'Spam', dataIndex: 'isSpam', render: (v: boolean, r: any) => v ? <Tag color="volcano">Spam ({r.spamScore})</Tag> : <Tag color="default">OK</Tag> },
     { title: 'Description', dataIndex: 'description' },
     { title: 'Actions', render: (_: any, row: ToolRow) => (
       <>

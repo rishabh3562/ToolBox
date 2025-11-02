@@ -14,10 +14,6 @@ const ToolSchema = new Schema(
       notes: { type: String },
       rejectionReason: { type: String },
     },
-    // Spam detection metadata
-    isSpam: { type: Boolean, default: false },
-    spamScore: { type: Number, default: 0 },
-    spamReasons: { type: [String], default: [] },
   },
   { timestamps: true },
 );
