@@ -39,11 +39,13 @@ function createRateLimiter(config: { requests: number; window: string }) {
   const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-  if (redisUrl && redisToken) {
+  const useUpstash = !!redisUrl && !!redisToken && /^https:\/\//.test(redisUrl);
+
+  if (useUpstash) {
     // Use Redis for production
     const redis = new Redis({
-      url: redisUrl,
-      token: redisToken,
+      url: redisUrl as string,
+      token: redisToken as string,
     });
 
     return new Ratelimit({
@@ -52,39 +54,39 @@ function createRateLimiter(config: { requests: number; window: string }) {
       analytics: true,
       ephemeralCache: new Map<string, number>(),
     });
-  } else {
-    // Pure in-memory limiter for single-instance/dev environments
-    const windowMs = parseWindowToMs(config.window);
-    const limit = config.requests;
-    const buckets = new Map<string, number[]>(); // timestamps in ms
-
-    return {
-      async limit(identifier: string) {
-        const now = Date.now();
-        const cutoff = now - windowMs;
-        const timestamps = (buckets.get(identifier) ?? []).filter(
-          (t) => t > cutoff,
-        );
-        const allowed = timestamps.length < limit;
-
-        if (allowed) {
-          timestamps.push(now);
-        }
-        buckets.set(identifier, timestamps);
-
-        const remaining = Math.max(0, limit - timestamps.length);
-        const oldest = timestamps[0] ?? now;
-        const reset = oldest + windowMs;
-
-        return {
-          success: allowed,
-          limit,
-          remaining,
-          reset,
-        };
-      },
-    };
   }
+
+  // Pure in-memory limiter for single-instance/dev environments
+  const windowMs = parseWindowToMs(config.window);
+  const limit = config.requests;
+  const buckets = new Map<string, number[]>(); // timestamps in ms
+
+  return {
+    async limit(identifier: string) {
+      const now = Date.now();
+      const cutoff = now - windowMs;
+      const timestamps = (buckets.get(identifier) ?? []).filter(
+        (t) => t > cutoff,
+      );
+      const allowed = timestamps.length < limit;
+
+      if (allowed) {
+        timestamps.push(now);
+      }
+      buckets.set(identifier, timestamps);
+
+      const remaining = Math.max(0, limit - timestamps.length);
+      const oldest = timestamps[0] ?? now;
+      const reset = oldest + windowMs;
+
+      return {
+        success: allowed,
+        limit,
+        remaining,
+        reset,
+      };
+    },
+  };
 }
 
 // Create rate limiters for different endpoint types

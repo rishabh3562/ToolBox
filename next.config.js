@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // Allow API routes and Route Handlers by disabling static export
+  // output: "export",
   typescript: {
     ignoreBuildErrors: false,
   },
@@ -12,6 +10,10 @@ const nextConfig = {
   pageExtensions: ["tsx", "ts", "jsx", "js"],
   experimental: {
     externalDir: true,
+  },
+  // Ensure correct workspace root selection when multiple lockfiles exist
+  turbopack: {
+    root: __dirname,
   },
 };
 
