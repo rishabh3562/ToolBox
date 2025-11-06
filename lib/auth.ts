@@ -1,5 +1,7 @@
 import type { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import { connectDB } from '@/lib/db/connection';
+import User from '@/lib/db/models/User';
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: 'jwt' },
@@ -14,28 +16,63 @@ export const authOptions: NextAuthOptions = {
         const email = credentials?.email?.toLowerCase();
         const password = credentials?.password || '';
 
-        // Environment-based admin authentication
-        const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-        const adminPassword = process.env.ADMIN_PASSWORD;
-
-        // Validate that admin credentials are properly configured
-        if (!adminEmail || !adminPassword) {
-          console.error('❌ ADMIN_EMAIL and ADMIN_PASSWORD must be set in environment variables');
+        if (!email || !password) {
           return null;
         }
 
-        // Enforce minimum password length for security
-        if (adminPassword.length < 16) {
-          console.error('❌ ADMIN_PASSWORD must be at least 16 characters long');
+        try {
+          // Connect to database
+          await connectDB();
+
+          // Try to find user in database (include passwordHash for verification)
+          const user = await User.findOne({ email }).select('+passwordHash');
+
+          if (user) {
+            // Check if user is banned
+            if (user.banned) {
+              console.error('❌ User is banned:', email);
+              return null;
+            }
+
+            // If user has a password hash, verify it
+            if (user.passwordHash) {
+              const isValid = await user.verifyPassword(password);
+
+              if (isValid) {
+                return {
+                  id: user._id.toString(),
+                  email: user.email,
+                  name: user.name,
+                  isAdmin: user.isAdmin,
+                } as any;
+              }
+            }
+          }
+
+          // Fallback: Environment-based admin authentication
+          // This is a backup method for initial setup
+          const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
+          const adminPassword = process.env.ADMIN_PASSWORD;
+
+          if (adminEmail && adminPassword && adminPassword.length >= 16) {
+            if (email === adminEmail && password === adminPassword) {
+              // Return a special admin session
+              // Note: This won't have a real user ID in the database
+              return {
+                id: 'env-admin',
+                name: 'Admin',
+                email: adminEmail,
+                isAdmin: true,
+              } as any;
+            }
+          }
+
+          // Authentication failed
+          return null;
+        } catch (error) {
+          console.error('Authentication error:', error);
           return null;
         }
-
-        // Verify credentials
-        if (email && password && email === adminEmail && password === adminPassword) {
-          return { id: 'admin', name: 'Admin', email: adminEmail, isAdmin: true } as any;
-        }
-
-        return null;
       },
     }),
   ],
