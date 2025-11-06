@@ -17,6 +17,12 @@ const FavoriteContentSchema = new Schema<FavoriteContent>({
 
 // Main schema
 const ProfileSchema = new Schema<IProfile>({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: false, // Optional for backward compatibility with existing data
+    index: true,
+  },
   name: { type: String, required: true },
   handle: { type: String, required: true },
   platform: {
@@ -32,6 +38,10 @@ const ProfileSchema = new Schema<IProfile>({
   createdAt: { type: String, required: true },
   updatedAt: { type: String, required: true },
 });
+
+// Add indexes for efficient querying
+ProfileSchema.index({ userId: 1, createdAt: -1 });
+ProfileSchema.index({ userId: 1, platform: 1 });
 
 // Model (safe for Next.js dev reloads)
 const ProfileModel: Model<IProfile> =

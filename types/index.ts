@@ -1,5 +1,6 @@
 export interface Template {
   id: string;
+  userId?: string;
   name: string;
   category: string;
   content: string;
@@ -7,6 +8,7 @@ export interface Template {
 }
 
 export interface Variable {
+  userId?: string;
   key: string;
   value: string;
   label: string;

@@ -56,6 +56,12 @@ const TableSchema = new MongooseSchema<Table>({
 
 const SchemaModelSchema = new MongooseSchema<ISchema>(
   {
+    userId: {
+      type: MongooseSchema.Types.ObjectId,
+      ref: 'User',
+      required: false, // Optional for backward compatibility with existing data
+      index: true,
+    },
     name: { type: String, required: true },
     description: { type: String },
     tables: [TableSchema],
@@ -64,6 +70,10 @@ const SchemaModelSchema = new MongooseSchema<ISchema>(
     timestamps: true,
   },
 );
+
+// Add indexes for efficient querying
+SchemaModelSchema.index({ userId: 1, createdAt: -1 });
+SchemaModelSchema.index({ userId: 1, name: 1 });
 
 // Final model (safe for hot reload)
 const SchemaModel: Model<ISchema> =

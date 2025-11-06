@@ -8,6 +8,7 @@ export type PlatformType =
 
 export interface Profile {
   id: string;
+  userId?: string;
   name: string;
   handle: string;
   platform: PlatformType;

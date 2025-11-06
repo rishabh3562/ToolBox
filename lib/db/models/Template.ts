@@ -4,6 +4,12 @@ import { Template as ITemplate } from "@/types";
 // Avoid model overwrite error in dev
 const TemplateSchema = new Schema<ITemplate>(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: false, // Optional for backward compatibility with existing data
+      index: true,
+    },
     name: { type: String, required: true },
     category: {
       type: String,
@@ -16,6 +22,11 @@ const TemplateSchema = new Schema<ITemplate>(
     timestamps: true,
   },
 );
+
+// Add indexes for efficient querying
+TemplateSchema.index({ userId: 1, createdAt: -1 });
+TemplateSchema.index({ userId: 1, category: 1 });
+TemplateSchema.index({ tags: 1 });
 
 // Ensure mongoose.models exists
 const TemplateModel: Model<ITemplate> =

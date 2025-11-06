@@ -37,6 +37,7 @@ export interface ForeignKey {
 
 export interface Schema {
   id?: string;
+  userId?: string;
   name: string;
   description?: string;
   tables: Table[];

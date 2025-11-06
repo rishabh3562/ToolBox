@@ -1,5 +1,6 @@
 export interface Snippet {
   id: string;
+  userId?: string;
   title: string;
   description: string;
   code: string;
