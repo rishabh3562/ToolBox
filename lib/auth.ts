@@ -14,17 +14,24 @@ export const authOptions: NextAuthOptions = {
         const email = credentials?.email?.toLowerCase();
         const password = credentials?.password || '';
 
-        // TEMP: hardcoded accounts (no DB)
-        const hardcoded = [
-          { email: 'admin@local', password: 'admin123', id: 'admin', name: 'Admin', isAdmin: true },
-        ];
-        const match = hardcoded.find(u => u.email === email && u.password === password);
-        if (match) return match as any;
-
-        // Optional env-based admin fallback
+        // Environment-based admin authentication
         const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-        const adminPassword = process.env.ADMIN_PASSWORD || '';
-        if (email && password && adminEmail && adminPassword && email === adminEmail && password === adminPassword) {
+        const adminPassword = process.env.ADMIN_PASSWORD;
+
+        // Validate that admin credentials are properly configured
+        if (!adminEmail || !adminPassword) {
+          console.error('❌ ADMIN_EMAIL and ADMIN_PASSWORD must be set in environment variables');
+          return null;
+        }
+
+        // Enforce minimum password length for security
+        if (adminPassword.length < 16) {
+          console.error('❌ ADMIN_PASSWORD must be at least 16 characters long');
+          return null;
+        }
+
+        // Verify credentials
+        if (email && password && email === adminEmail && password === adminPassword) {
           return { id: 'admin', name: 'Admin', email: adminEmail, isAdmin: true } as any;
         }
 

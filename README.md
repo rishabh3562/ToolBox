@@ -82,37 +82,91 @@ Streamline your GitHub workflow with helpful utilities for repositories, issues,
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
 
 ```bash
 git clone https://github.com/rishabh3562/ToolBox.git
 cd ToolBox
 ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 
 ```bash
 npm install
 ```
 
-3. Set up environment variables:
+3. **Set up environment variables:**
 
 ```bash
 # Copy the example environment file
 cp .env.example .env
-
-# Edit .env and add your actual values:
-# - MONGODB_URI: Your MongoDB connection string (optional)
-# - NEXT_PUBLIC_GEMINI_API_KEY: Your Gemini API key from https://makersuite.google.com/app/apikey (optional)
 ```
 
-4. Run the development server:
+4. **Configure required environment variables in `.env`:**
+
+⚠️ **CRITICAL:** The following environment variables are **REQUIRED** for the app to start:
+
+```bash
+# MongoDB connection (required)
+MONGODB_URI=mongodb://127.0.0.1:27017/toolbox
+
+# NextAuth configuration (required)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=  # Generate with: openssl rand -base64 32
+
+# Admin credentials (required)
+ADMIN_EMAIL=your-email@example.com
+ADMIN_PASSWORD=  # Generate with: openssl rand -base64 24 (min 16 chars)
+```
+
+**Generate secure credentials:**
+
+```bash
+# Generate NextAuth secret (copy output to NEXTAUTH_SECRET)
+openssl rand -base64 32
+
+# Generate admin password (copy output to ADMIN_PASSWORD)
+openssl rand -base64 24
+```
+
+**Optional but recommended for production:**
+
+```bash
+# Upstash Redis (required for rate limiting in production)
+# Sign up at: https://upstash.com (free tier available)
+UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your-token
+
+# Gemini AI (for AI-powered features)
+NEXT_PUBLIC_GEMINI_API_KEY=your-key  # Get from https://makersuite.google.com/app/apikey
+```
+
+5. **Verify your configuration:**
+
+The app will automatically validate your environment variables on startup. If anything is missing or misconfigured, you'll see helpful error messages.
+
+6. **Run the development server:**
 
 ```bash
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+7. **Open [http://localhost:3000](http://localhost:3000) in your browser**
+
+8. **Access admin dashboard at [http://localhost:3000/login](http://localhost:3000/login)**
+   - Use the `ADMIN_EMAIL` and `ADMIN_PASSWORD` you set in `.env`
+
+### 🔒 Security Checklist
+
+Before deploying to production, ensure:
+
+- [ ] `NEXTAUTH_SECRET` is at least 32 characters and randomly generated
+- [ ] `ADMIN_PASSWORD` is at least 16 characters and randomly generated
+- [ ] `.env` file is in `.gitignore` (it is by default)
+- [ ] No credentials are hardcoded in source code
+- [ ] Redis (Upstash) is configured for production deployments
+- [ ] `NEXTAUTH_URL` is set to your actual domain in production
+- [ ] MongoDB uses Atlas or managed instance (not localhost) in production
 
 ## 📦 Build & Deploy
 
