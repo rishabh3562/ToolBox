@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { rateLimitMiddleware } from "@/lib/middleware/rate-limit-middleware";
+import { SnippetService } from "@/lib/db/services/snippetService";
 
 // GET /api/snippets - Get all code snippets
 async function handleGetSnippets(request: NextRequest): Promise<NextResponse> {
@@ -8,43 +11,24 @@ async function handleGetSnippets(request: NextRequest): Promise<NextResponse> {
     const language = searchParams.get("language");
     const tag = searchParams.get("tag");
 
-    // Simulate fetching snippets from database
-    const snippets = [
-      {
-        id: "1",
-        title: "Array Chunk Function",
-        description: "Split array into chunks of specified size",
-        language: "javascript",
-        code: "function chunk(array, size) {\n  const chunks = [];\n  for (let i = 0; i < array.length; i += size) {\n    chunks.push(array.slice(i, i + size));\n  }\n  return chunks;\n}",
-        tags: ["array", "utility", "javascript"],
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "2",
-        title: "Debounce Function",
-        description: "Delay function execution until after delay",
-        language: "typescript",
-        code: "function debounce<T extends (...args: any[]) => any>(\n  func: T,\n  delay: number\n): (...args: Parameters<T>) => void {\n  let timeoutId: NodeJS.Timeout;\n  return (...args: Parameters<T>) => {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => func(...args), delay);\n  };\n}",
-        tags: ["performance", "utility", "typescript"],
-        createdAt: new Date().toISOString(),
-      },
-    ];
+    // Fetch snippets from database
+    let snippets;
 
-    // Filter by language if specified
-    let filteredSnippets = snippets;
     if (language) {
-      filteredSnippets = filteredSnippets.filter(
-        (s) => s.language === language,
-      );
+      snippets = await SnippetService.getSnippetsByLanguage(language);
+    } else {
+      snippets = await SnippetService.getAllSnippets();
     }
+
+    // Filter by tag if specified
     if (tag) {
-      filteredSnippets = filteredSnippets.filter((s) => s.tags.includes(tag));
+      snippets = snippets.filter((s) => s.tags?.includes(tag));
     }
 
     return NextResponse.json({
       success: true,
-      data: filteredSnippets,
-      count: filteredSnippets.length,
+      data: snippets,
+      count: snippets.length,
       filters: { language, tag },
     });
   } catch (error) {
@@ -61,8 +45,17 @@ async function handleCreateSnippet(
   request: NextRequest,
 ): Promise<NextResponse> {
   try {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized - Please login to create snippets" },
+        { status: 401 },
+      );
+    }
+
     const body = await request.json();
-    const { title, description, language, code, tags } = body;
+    const { title, description, language, code, tags, category } = body;
 
     // Validate required fields
     if (!title || !code || !language) {
@@ -96,17 +89,17 @@ async function handleCreateSnippet(
       );
     }
 
-    // Simulate creating snippet in database
-    const newSnippet = {
-      id: crypto.randomUUID(),
+    // Create snippet in database
+    const newSnippet = await SnippetService.createSnippet({
       title,
       description: description || "",
       language: language.toLowerCase(),
       code,
       tags: tags || [],
+      category: category || "general",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
+    });
 
     return NextResponse.json(
       {

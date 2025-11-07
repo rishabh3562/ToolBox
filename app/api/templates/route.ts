@@ -1,30 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { rateLimitMiddleware } from "@/lib/middleware/rate-limit-middleware";
+import { TemplateService } from "@/lib/db/services/templateService";
 
 // GET /api/templates - Get all templates
 async function handleGetTemplates(request: NextRequest): Promise<NextResponse> {
   try {
-    // Simulate fetching templates from database
-    const templates = [
-      {
-        id: "1",
-        name: "React Component Template",
-        description: "Boilerplate for React functional components",
-        content:
-          "import React from 'react';\n\nconst {{componentName}} = () => {\n  return (\n    <div>\n      {{content}}\n    </div>\n  );\n};\n\nexport default {{componentName}};",
-        variables: ["componentName", "content"],
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: "2",
-        name: "API Route Template",
-        description: "Next.js API route boilerplate",
-        content:
-          "import { NextRequest, NextResponse } from 'next/server';\n\nexport async function GET(request: NextRequest) {\n  try {\n    // {{logic}}\n    return NextResponse.json({ success: true });\n  } catch (error) {\n    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });\n  }\n}",
-        variables: ["logic"],
-        createdAt: new Date().toISOString(),
-      },
-    ];
+    const { searchParams } = new URL(request.url);
+    const searchQuery = searchParams.get("search");
+    const categories = searchParams.get("categories");
+    const tags = searchParams.get("tags");
+
+    let templates;
+
+    // Check if filters are provided
+    if (searchQuery || categories || tags) {
+      templates = await TemplateService.getFilteredTemplates({
+        searchQuery: searchQuery || undefined,
+        categories: categories ? categories.split(",") : undefined,
+        tags: tags ? tags.split(",") : undefined,
+      });
+    } else {
+      templates = await TemplateService.getAllTemplates();
+    }
 
     return NextResponse.json({
       success: true,
@@ -45,6 +44,15 @@ async function handleCreateTemplate(
   request: NextRequest,
 ): Promise<NextResponse> {
   try {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Unauthorized - Please login to create templates" },
+        { status: 401 },
+      );
+    }
+
     let body: unknown;
     try {
       body = await request.json();
@@ -52,19 +60,12 @@ async function handleCreateTemplate(
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
 
-    const { name, description, content, variables } =
+    const { name, description, content, category, tags } =
       (body as Record<string, unknown>) ?? {};
 
     if (typeof name !== "string" || typeof content !== "string") {
       return NextResponse.json(
         { error: "Name and content are required" },
-        { status: 400 },
-      );
-    }
-
-    if (variables != null && !Array.isArray(variables)) {
-      return NextResponse.json(
-        { error: "variables must be an array of strings" },
         { status: 400 },
       );
     }
@@ -77,16 +78,15 @@ async function handleCreateTemplate(
       );
     }
 
-    // Simulate creating template in database
-    const newTemplate = {
-      id: crypto.randomUUID(),
+    // Create template in database
+    const newTemplate = await TemplateService.createTemplate({
       name,
-      description: description || "",
+      description: typeof description === "string" ? description : "",
       content,
-      variables: Array.isArray(variables) ? variables.map(String) : [],
+      category: (typeof category === "string" ? category : "general") as "email" | "blog" | "social" | "general",
+      tags: Array.isArray(tags) ? tags.map(String) : [],
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    });
 
     return NextResponse.json(
       {

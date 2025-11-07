@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "toolbox-api-collection-2025",
 		"name": "ToolBox API Collection",
-		"description": "Complete API collection for ToolBox - Developer tools and templates manager",
+		"description": "Complete API collection for ToolBox - Developer tools and templates manager.\n\n**IMPORTANT:** To create/update/delete snippets and templates, you must be logged in. Use the browser to login at http://localhost:3000/login, then Postman will use the session cookie automatically.\n\n**How to use:**\n1. Register a user (POST /api/auth/register)\n2. Login via browser at http://localhost:3000/login\n3. Use Postman - it will automatically use your browser's session cookies\n4. GET requests work without auth, POST/PUT/DELETE require authentication",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
