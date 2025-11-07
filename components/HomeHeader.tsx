@@ -3,8 +3,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, LogIn, UserPlus } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { ArrowRight, LogIn, UserPlus, LogOut, User as UserIcon } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function HomeHeader() {
   const { data: session, status } = useSession();
@@ -31,12 +39,55 @@ export function HomeHeader() {
             </Button>
           </Link>
           {mounted && session ? (
-            <Link href="/admin">
-              <Button className="h-10 px-4">
-                Dashboard
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+            <>
+              {session.user?.isAdmin && (
+                <Link href="/admin">
+                  <Button variant="ghost" className="h-10 px-4">
+                    Dashboard
+                  </Button>
+                </Link>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="h-10 px-3 gap-2">
+                    <div className="w-2 h-2 rounded-full bg-green-500" title="Logged in" />
+                    <UserIcon className="h-4 w-4" />
+                    <span className="max-w-[100px] truncate">
+                      {session.user?.name || session.user?.email}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                    {session.user?.email}
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="cursor-pointer">
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  {session.user?.isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer">
+                        <ArrowRight className="mr-2 h-4 w-4" />
+                        Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="cursor-pointer text-red-600 focus:text-red-600"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           ) : mounted ? (
             <>
               <Link href="/login">

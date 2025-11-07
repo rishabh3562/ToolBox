@@ -1,0 +1,550 @@
+{
+	"info": {
+		"_postman_id": "toolbox-api-collection-2025",
+		"name": "ToolBox API Collection",
+		"description": "Complete API collection for ToolBox - Developer tools and templates manager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "register"]
+						},
+						"description": "Register a new user account"
+					}
+				},
+				{
+					"name": "Login (Get Session)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/callback/credentials",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "auth", "callback", "credentials"]
+						},
+						"description": "Login with email and password"
+					}
+				}
+			]
+		},
+		{
+			"name": "Templates",
+			"item": [
+				{
+					"name": "Get All Templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/templates",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "templates"]
+						}
+					}
+				},
+				{
+					"name": "Create Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"React Component Template\",\n  \"description\": \"Boilerplate for React functional components\",\n  \"category\": \"React\",\n  \"tags\": [\"react\", \"component\", \"typescript\"],\n  \"content\": \"import React from 'react';\\n\\nexport default function Component() {\\n  return <div>Component</div>;\\n}\",\n  \"language\": \"typescript\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/templates",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "templates"]
+						}
+					}
+				},
+				{
+					"name": "Update Template",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"_id\": \"template_id_here\",\n  \"title\": \"Updated Template Title\",\n  \"content\": \"Updated content\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/templates",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "templates"]
+						}
+					}
+				},
+				{
+					"name": "Delete Template",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/templates?id=template_id_here",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "templates"],
+							"query": [
+								{
+									"key": "id",
+									"value": "template_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Snippets",
+			"item": [
+				{
+					"name": "Get All Snippets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/snippets",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "snippets"]
+						}
+					}
+				},
+				{
+					"name": "Create Snippet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Array Map Example\",\n  \"description\": \"Example of using array map\",\n  \"language\": \"javascript\",\n  \"code\": \"const doubled = arr.map(x => x * 2);\",\n  \"tags\": [\"javascript\", \"array\", \"map\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/snippets",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "snippets"]
+						}
+					}
+				},
+				{
+					"name": "Update Snippet",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"_id\": \"snippet_id_here\",\n  \"title\": \"Updated Snippet\",\n  \"code\": \"updated code\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/snippets",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "snippets"]
+						}
+					}
+				},
+				{
+					"name": "Delete Snippet",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/snippets?id=snippet_id_here",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "snippets"],
+							"query": [
+								{
+									"key": "id",
+									"value": "snippet_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Tools",
+			"item": [
+				{
+					"name": "Submit Tool",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"My Awesome Tool\",\n  \"description\": \"A tool that does something amazing\",\n  \"url\": \"https://example.com/tool\",\n  \"category\": \"Development\",\n  \"tags\": [\"productivity\", \"dev\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/tools/submit",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "tools", "submit"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Announcements",
+			"item": [
+				{
+					"name": "Get Announcements",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/announcements",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "announcements"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "AI",
+			"item": [
+				{
+					"name": "Generate Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"prompt\": \"Generate a React component for user profile\",\n  \"type\": \"component\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/ai/generate",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "ai", "generate"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Report",
+			"item": [
+				{
+					"name": "Report Content",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"contentId\": \"content_id_here\",\n  \"contentType\": \"template\",\n  \"reason\": \"spam\",\n  \"description\": \"This content is spam\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/report",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "report"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "Get All Users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/users",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "users"]
+								}
+							}
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"user_id_here\",\n  \"banned\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/users",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "users"]
+								}
+							}
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/users?userId=user_id_here",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "users"],
+									"query": [
+										{
+											"key": "userId",
+											"value": "user_id_here"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Backup",
+					"item": [
+						{
+							"name": "Get Backups",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/backup",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "backup"]
+								}
+							}
+						},
+						{
+							"name": "Create Backup",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"collection\": \"templates\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/backup",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "backup"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Restore",
+					"item": [
+						{
+							"name": "Restore Backup",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"backupId\": \"backup_id_here\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/restore",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "restore"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Logs",
+					"item": [
+						{
+							"name": "Get Audit Logs",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/logs",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "logs"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Content Moderation",
+					"item": [
+						{
+							"name": "Get Content Queue",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/content",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "content"]
+								}
+							}
+						},
+						{
+							"name": "Moderate Content",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"contentId\": \"content_id_here\",\n  \"action\": \"approve\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/content",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "content"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Tools Approval",
+					"item": [
+						{
+							"name": "Get Pending Tools",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/tools",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "tools"]
+								}
+							}
+						},
+						{
+							"name": "Approve/Reject Tool",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"toolId\": \"tool_id_here\",\n  \"status\": \"approved\",\n  \"notes\": \"Looks good!\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/admin/tools",
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "admin", "tools"]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "health"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}

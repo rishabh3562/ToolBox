@@ -34,15 +34,37 @@ function parseWindowToMs(window: string): number {
   }
 }
 
+// Track if we've logged the rate limiting status
+let hasLoggedStatus = false;
+
 function createRateLimiter(config: { requests: number; window: string }) {
+  // Check if rate limiting is enabled
+  const isRateLimitingEnabled = process.env.ENABLE_RATE_LIMITING !== 'false';
+
+  if (!isRateLimitingEnabled && !hasLoggedStatus) {
+    console.log('🔓 Rate limiting is DISABLED (ENABLE_RATE_LIMITING=false)');
+    hasLoggedStatus = true;
+  }
+
   // Check if we have Redis configuration
   const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-  const useUpstash = !!redisUrl && !!redisToken && /^https:\/\//.test(redisUrl);
+  // Check for placeholder values that shouldn't be used
+  const isPlaceholder =
+    !redisUrl ||
+    !redisToken ||
+    redisUrl.includes('your-redis') ||
+    redisUrl.includes('example.com') ||
+    redisToken.includes('your-token') ||
+    redisToken === 'your-upstash-token';
 
-  if (useUpstash) {
+  const useUpstash = !isPlaceholder && /^https:\/\//.test(redisUrl);
+
+  if (useUpstash && !hasLoggedStatus) {
     // Use Redis for production
+    console.log('✅ Rate limiting ENABLED - Using Upstash Redis');
+    hasLoggedStatus = true;
     const redis = new Redis({
       url: redisUrl as string,
       token: redisToken as string,
@@ -57,6 +79,11 @@ function createRateLimiter(config: { requests: number; window: string }) {
   }
 
   // Pure in-memory limiter for single-instance/dev environments
+  if (!hasLoggedStatus && isRateLimitingEnabled) {
+    console.log('⚠️  Rate limiting ENABLED - Using in-memory storage (dev mode)');
+    console.log('💡 Tip: Set ENABLE_RATE_LIMITING=false in .env to disable rate limiting');
+    hasLoggedStatus = true;
+  }
   const windowMs = parseWindowToMs(config.window);
   const limit = config.requests;
   const buckets = new Map<string, number[]>(); // timestamps in ms

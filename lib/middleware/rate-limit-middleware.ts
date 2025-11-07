@@ -16,6 +16,14 @@ export async function withRateLimit(
   handler: (req: NextRequest) => Promise<NextResponse>,
   type: RateLimitType = "default",
 ): Promise<NextResponse> {
+  // Check if rate limiting is enabled
+  const isRateLimitingEnabled = process.env.ENABLE_RATE_LIMITING !== 'false';
+
+  if (!isRateLimitingEnabled) {
+    // Rate limiting is disabled, proceed directly to handler
+    return await handler(request);
+  }
+
   try {
     const clientIP = getClientIP(request);
     const identifier = `${clientIP}:${type}`;
