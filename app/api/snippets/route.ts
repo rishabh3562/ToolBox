@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { rateLimitMiddleware } from "@/lib/middleware/rate-limit-middleware";
 import { SnippetService } from "@/lib/db/services/snippetService";
+import { getAuthenticatedUser } from "@/lib/helpers/apiAuth";
 
 // GET /api/snippets - Get all code snippets
 async function handleGetSnippets(request: NextRequest): Promise<NextResponse> {
@@ -45,9 +44,9 @@ async function handleCreateSnippet(
   request: NextRequest,
 ): Promise<NextResponse> {
   try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    // Check authentication (supports both session and API token)
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
       return NextResponse.json(
         { error: "Unauthorized - Please login to create snippets" },
         { status: 401 },
@@ -97,6 +96,7 @@ async function handleCreateSnippet(
       code,
       tags: tags || [],
       category: category || "general",
+      isPublic: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });

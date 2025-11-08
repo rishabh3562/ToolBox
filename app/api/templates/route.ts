@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { rateLimitMiddleware } from "@/lib/middleware/rate-limit-middleware";
 import { TemplateService } from "@/lib/db/services/templateService";
+import { getAuthenticatedUser } from "@/lib/helpers/apiAuth";
 
 // GET /api/templates - Get all templates
 async function handleGetTemplates(request: NextRequest): Promise<NextResponse> {
@@ -44,9 +43,9 @@ async function handleCreateTemplate(
   request: NextRequest,
 ): Promise<NextResponse> {
   try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
-    if (!session?.user) {
+    // Check authentication (supports both session and API token)
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
       return NextResponse.json(
         { error: "Unauthorized - Please login to create templates" },
         { status: 401 },
@@ -60,32 +59,34 @@ async function handleCreateTemplate(
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
 
-    const { name, description, content, category, tags } =
+    // Accept both 'name' and 'title' for compatibility
+    const { name, title, description, content, category, tags } =
       (body as Record<string, unknown>) ?? {};
 
-    if (typeof name !== "string" || typeof content !== "string") {
+    // Use 'name' if provided, otherwise use 'title'
+    const templateName = (name as string) || (title as string);
+
+    if (typeof templateName !== "string" || typeof content !== "string") {
       return NextResponse.json(
-        { error: "Name and content are required" },
+        { error: "Name/title and content are required" },
         { status: 400 },
       );
     }
 
     // Validate required fields
-    if (!name || !content) {
+    if (!templateName || !content) {
       return NextResponse.json(
-        { error: "Name and content are required" },
+        { error: "Name/title and content are required" },
         { status: 400 },
       );
     }
 
     // Create template in database
     const newTemplate = await TemplateService.createTemplate({
-      name,
-      description: typeof description === "string" ? description : "",
+      name: templateName, // Use the resolved name
       content,
       category: (typeof category === "string" ? category : "general") as "email" | "blog" | "social" | "general",
       tags: Array.isArray(tags) ? tags.map(String) : [],
-      createdAt: new Date().toISOString(),
     });
 
     return NextResponse.json(
