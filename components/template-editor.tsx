@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { TemplateService } from "@/lib/db/services/templateService";
+import { api } from "@/lib/api/client";
 
 interface TemplateEditorProps {
   template: Template;
@@ -24,7 +24,7 @@ export function TemplateEditor({ template, variables }: TemplateEditorProps) {
     try {
       setError(null);
       setSuccess(null);
-      await TemplateService.updateTemplate(template.id, {
+      await api.templates.update(template.id, {
         content,
         category,
         tags: tags.split(",").map((t) => t.trim()),
